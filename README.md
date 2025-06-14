@@ -125,16 +125,23 @@ SONICSCAN_API_KEY=your_sonicscan_api_key
 
 ## 📜 Available Scripts
 
+All scripts are located in the `scripts/` directory for better organization.
+
 ### Core Scripts
 
-- **`test-vrf-system.ts`** - Complete VRF system test with real-time monitoring
-- **`check-request-status.ts`** - Monitor request status and contract health
-- **`fund-new-contracts.ts`** - Fund contracts with LayerZero fees
+- **`scripts/test-vrf-system.ts`** - Complete VRF system test with real-time monitoring
+- **`scripts/check-request-status.ts`** - Monitor request status and contract health
+- **`scripts/fund-new-contracts.ts`** - Fund contracts with LayerZero fees
+
+### Deployment Scripts
+
+- **`scripts/deploy/01_deploy_arbitrum_contract.ts`** - Deploy VRF consumer on Arbitrum
+- **`scripts/deploy/02_deploy_sonic_contract.ts`** - Deploy VRF integrator on Sonic
 
 ### Utility Scripts
 
-- **`withdraw-from-all-previous-contracts.ts`** - Withdraw funds from old deployments
-- **`withdraw-from-sonic-contract.ts`** - Specific Sonic contract withdrawal
+- **`scripts/withdraw-from-all-previous-contracts.ts`** - Withdraw funds from old deployments
+- **`scripts/withdraw-from-sonic-contract.ts`** - Specific Sonic contract withdrawal
 
 ## 🔧 Configuration
 
