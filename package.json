@@ -1,0 +1,28 @@
+{
+  "name": "lz-vrf",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "deploy": "npx hardhat lz:deploy",
+    "wire": "npx hardhat lz:oapp:wire",
+    "config": "npx hardhat lz:oapp:config:get",
+    "compile": "npx hardhat compile"
+  },
+  "devDependencies": {
+    "@layerzerolabs/lz-definitions": "^2.3.0",
+    "@layerzerolabs/lz-evm-messagelib-v2": "^3.0.102",
+    "@layerzerolabs/lz-evm-protocol-v2": "^3.0.102",
+    "@layerzerolabs/oapp-evm": "^0.3.0",
+    "@layerzerolabs/toolbox-hardhat": "^0.6.0",
+    "@nomicfoundation/hardhat-ethers": "^3.0.0",
+    "@nomicfoundation/hardhat-verify": "^2.0.14",
+    "@nomiclabs/hardhat-ethers": "^2.2.3",
+    "@openzeppelin/contracts": "^5.0.0",
+    "dotenv": "^16.5.0",
+    "hardhat": "^2.24.0",
+    "hardhat-deploy": "^1.0.3",
+    "solidity-bytes-utils": "^0.8.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.0.0"
+  }
+}
