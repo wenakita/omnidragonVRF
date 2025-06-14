@@ -9,8 +9,8 @@ async function main() {
     console.log("Signer address:", signer.address);
     
     // New contract addresses
-    const NEW_ARBITRUM_CONTRACT = "0xd703FFB355fcE93AFD73387A2BE11d8819CAF791";
-    const NEW_SONIC_CONTRACT = "0xe0dFebC010E0680b9B824A51227B2e7cb8C0F747";
+    const NEW_ARBITRUM_CONTRACT = process.env.ARBITRUM_VRF_CONTRACT || "0xd703FFB355fcE93AFD73387A2BE11d8819CAF791";
+const NEW_SONIC_CONTRACT = process.env.SONIC_VRF_CONTRACT || "0xe0dFebC010E0680b9B824A51227B2e7cb8C0F747";
     
     // Check current network
     const network = hre.network.name;

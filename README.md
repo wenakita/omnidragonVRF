@@ -51,13 +51,55 @@ yarn install
 
 ### Environment Setup
 
-Copy `.env.example` to `.env` and configure:
+Copy `.env.example` to `.env` and configure your environment variables:
 
 ```bash
+cp .env.example .env
+```
+
+#### Required Variables
+
+```bash
+# Deployer private key (required for all operations)
 PRIVATE_KEY=your_private_key_here
+
+# RPC URLs (optional - defaults provided)
 RPC_URL_ARBITRUM=https://arb1.arbitrum.io/rpc
 RPC_URL_SONIC=https://rpc.soniclabs.com
 ```
+
+#### Optional Variables
+
+All infrastructure addresses have sensible defaults, but can be overridden:
+
+```bash
+# API Keys for contract verification
+ARBISCAN_API_KEY=your_arbiscan_api_key
+SONICSCAN_API_KEY=your_sonicscan_api_key
+
+# LayerZero V2 Infrastructure (defaults to mainnet addresses)
+LZ_ARBITRUM_ENDPOINT=0x1a44076050125825900e736c501f859c50fE728c
+LZ_SONIC_ENDPOINT=0x6F475642a6e85809B1c36Fa62763669b1b48DD5B
+LZ_ARBITRUM_SEND_LIBRARY=0x975bcD720be66659e3EB3C0e4F1866a3020E493A
+LZ_ARBITRUM_RECEIVE_LIBRARY=0x7B9E184e07a6EE1aC23eAe0fe8D6Be2f663f05e6
+LZ_ARBITRUM_EXECUTOR=0x31CAe3B7fB82d847621859fb1585353c5720660D
+LZ_ARBITRUM_DVN=0x2f55c492897526677c5b68fb199ea31e2c126416
+LZ_SONIC_SEND_LIBRARY=0xC39161c743D0307EB9BCc9FEF03eeb9Dc4802de7
+LZ_SONIC_RECEIVE_LIBRARY=0xe1844c5D63a9543023008D332Bd3d2e6f1FE1043
+LZ_SONIC_EXECUTOR=0x4208D6E27538189bB48E603D6123A94b8Abe0A0b
+LZ_SONIC_DVN=0x282b3386571f7f794450d5789911a9804fa346b4
+
+# Chainlink VRF Configuration (defaults to working mainnet setup)
+CHAINLINK_VRF_COORDINATOR=0x3C0Ca683b403E37668AE3DC4FB62F4B29B6f7a3e
+CHAINLINK_SUBSCRIPTION_ID=76197290230634444536112874207591481868701552347170354938929514079949640872745
+CHAINLINK_KEY_HASH=0xe9f223d7d83ec85c4f78042a4845af3a1c8df7757b4997b815ce4b8d07aca68c
+
+# Contract Addresses (update these when you deploy your own contracts)
+ARBITRUM_VRF_CONTRACT=0xd703FFB355fcE93AFD73387A2BE11d8819CAF791
+SONIC_VRF_CONTRACT=0xe0dFebC010E0680b9B824A51227B2e7cb8C0F747
+```
+
+> **Note**: The default addresses are for mainnet. If deploying to testnets, you'll need to update the LayerZero and Chainlink addresses accordingly.
 
 ### Testing the System
 

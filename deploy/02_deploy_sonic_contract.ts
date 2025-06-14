@@ -15,7 +15,7 @@ const deploySonicContract: DeployFunction = async function (hre: HardhatRuntimeE
   try {
     console.log('Deploying ChainlinkVRFIntegratorV2_5 to Sonic...');
 
-    const layerZeroEndpoint = '0x6F475642a6e85809B1c36Fa62763669b1b48DD5B'; // LayerZero V2 endpoint for Sonic
+    const layerZeroEndpoint = process.env.LZ_SONIC_ENDPOINT || '0x6F475642a6e85809B1c36Fa62763669b1b48DD5B'; // LayerZero V2 endpoint for Sonic
     console.log('LayerZero Endpoint:', layerZeroEndpoint);
     console.log('Deployer:', deployer);
 

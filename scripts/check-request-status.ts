@@ -5,7 +5,7 @@ async function main() {
     console.log("Checking VRF Request Status...");
     console.log("==============================");
     
-    const contractAddress = "0xe0dFebC010E0680b9B824A51227B2e7cb8C0F747";
+    const contractAddress = process.env.SONIC_VRF_CONTRACT || "0xe0dFebC010E0680b9B824A51227B2e7cb8C0F747";
     
     // Get the deployed contract on Sonic
     const sonicContract = await ethers.getContractAt(
@@ -61,7 +61,7 @@ async function main() {
     console.log("Sonic Contract Balance:", ethers.utils.formatEther(sonicBalance), "S");
     
     // Check Arbitrum contract balance (if we can connect)
-    const arbitrumContractAddress = "0xd703FFB355fcE93AFD73387A2BE11d8819CAF791";
+    const arbitrumContractAddress = process.env.ARBITRUM_VRF_CONTRACT || "0xd703FFB355fcE93AFD73387A2BE11d8819CAF791";
     console.log("Arbitrum Contract Address:", arbitrumContractAddress);
     
     // Check peer connection
