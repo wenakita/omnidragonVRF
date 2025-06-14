@@ -57,27 +57,25 @@ Copy `.env.example` to `.env` and configure your environment variables:
 cp .env.example .env
 ```
 
+**Quick Start**: To test with existing deployed contracts, you can use:
+```bash
+cp .env.sample .env
+# Then add your PRIVATE_KEY to the .env file
+```
+
 #### Required Variables
+
+**All environment variables are required** - the system will not work without them:
 
 ```bash
 # Deployer private key (required for all operations)
 PRIVATE_KEY=your_private_key_here
 
-# RPC URLs (optional - defaults provided)
+# RPC URLs (required)
 RPC_URL_ARBITRUM=https://arb1.arbitrum.io/rpc
 RPC_URL_SONIC=https://rpc.soniclabs.com
-```
 
-#### Optional Variables
-
-All infrastructure addresses have sensible defaults, but can be overridden:
-
-```bash
-# API Keys for contract verification
-ARBISCAN_API_KEY=your_arbiscan_api_key
-SONICSCAN_API_KEY=your_sonicscan_api_key
-
-# LayerZero V2 Infrastructure (defaults to mainnet addresses)
+# LayerZero V2 Infrastructure (required)
 LZ_ARBITRUM_ENDPOINT=0x1a44076050125825900e736c501f859c50fE728c
 LZ_SONIC_ENDPOINT=0x6F475642a6e85809B1c36Fa62763669b1b48DD5B
 LZ_ARBITRUM_SEND_LIBRARY=0x975bcD720be66659e3EB3C0e4F1866a3020E493A
@@ -89,17 +87,23 @@ LZ_SONIC_RECEIVE_LIBRARY=0xe1844c5D63a9543023008D332Bd3d2e6f1FE1043
 LZ_SONIC_EXECUTOR=0x4208D6E27538189bB48E603D6123A94b8Abe0A0b
 LZ_SONIC_DVN=0x282b3386571f7f794450d5789911a9804fa346b4
 
-# Chainlink VRF Configuration (defaults to working mainnet setup)
+# Chainlink VRF Configuration (required for Arbitrum deployment)
 CHAINLINK_VRF_COORDINATOR=0x3C0Ca683b403E37668AE3DC4FB62F4B29B6f7a3e
 CHAINLINK_SUBSCRIPTION_ID=76197290230634444536112874207591481868701552347170354938929514079949640872745
 CHAINLINK_KEY_HASH=0xe9f223d7d83ec85c4f78042a4845af3a1c8df7757b4997b815ce4b8d07aca68c
 
-# Contract Addresses (update these when you deploy your own contracts)
+# Contract Addresses (required - update with your deployments)
 ARBITRUM_VRF_CONTRACT=0xd703FFB355fcE93AFD73387A2BE11d8819CAF791
 SONIC_VRF_CONTRACT=0xe0dFebC010E0680b9B824A51227B2e7cb8C0F747
+
+# API Keys for contract verification (optional)
+ARBISCAN_API_KEY=your_arbiscan_api_key
+SONICSCAN_API_KEY=your_sonicscan_api_key
 ```
 
-> **Note**: The default addresses are for mainnet. If deploying to testnets, you'll need to update the LayerZero and Chainlink addresses accordingly.
+> **Security Note**: All addresses are now required via environment variables. No fallback values are provided in the code to ensure sensitive information stays in your local `.env` file.
+
+> **Mainnet Addresses**: The addresses above are for mainnet. If deploying to testnets, you'll need to update the LayerZero and Chainlink addresses accordingly.
 
 ### Testing the System
 

@@ -4,7 +4,7 @@ const { ethers } = hre;
 async function main() {
     console.log("Testing VRF System...");
     
-    const contractAddress = process.env.SONIC_VRF_CONTRACT || "0xe0dFebC010E0680b9B824A51227B2e7cb8C0F747";
+    const contractAddress = process.env.SONIC_VRF_CONTRACT!;
     
     // Get the deployed contract on Sonic
     const sonicContract = await ethers.getContractAt(
