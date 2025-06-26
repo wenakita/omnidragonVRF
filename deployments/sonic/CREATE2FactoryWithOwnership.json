@@ -1,0 +1,137 @@
+{
+  "address": "0xAA28020DDA6b954D16208eccF873D79AC6533833",
+  "abi": [
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "deployer",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "deployed",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "salt",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "contractType",
+          "type": "string"
+        }
+      ],
+      "name": "ContractDeployed",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "salt",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "bytecodeHash",
+          "type": "bytes32"
+        }
+      ],
+      "name": "computeAddress",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes",
+          "name": "bytecode",
+          "type": "bytes"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "salt",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "string",
+          "name": "contractType",
+          "type": "string"
+        }
+      ],
+      "name": "deploy",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "deployed",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "name": "deploymentBySalt",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "***REDACTED_FOR_LIVE_STREAM***",
+  "receipt": {
+    "to": null,
+    "from": "***REDACTED_FOR_LIVE_STREAM***",
+    "contractAddress": "0xAA28020DDA6b954D16208eccF873D79AC6533833",
+    "transactionIndex": "***REDACTED***",
+    "gasUsed": "***REDACTED***",
+    "logsBloom": "***REDACTED***",
+    "blockHash": "***REDACTED***",
+    "transactionHash": "***REDACTED_FOR_LIVE_STREAM***",
+    "blockNumber": "***REDACTED***",
+    "confirmations": 1,
+    "cumulativeGasUsed": "***REDACTED***",
+    "status": 1,
+    "type": 2
+  },
+  "args": [],
+  "numDeployments": 1,
+  "solcInputHash": "***REDACTED***",
+  "metadata": {
+    "name": "CREATE2FactoryWithOwnership",
+    "network": "sonic",
+    "chainId": 146,
+    "deployedAt": "***REDACTED_TIMESTAMP***",
+    "deployer": "***REDACTED_FOR_LIVE_STREAM***",
+    "note": "🔐 LIVE STREAMING SAFE - Sensitive data redacted"
+  },
+  "bytecode": "***REDACTED_FOR_LIVE_STREAM***",
+  "deployedBytecode": "***REDACTED_FOR_LIVE_STREAM***"
+} 

@@ -12,14 +12,11 @@ broadcast/
 # Docs
 docs/
 
-# Dotenv file
+# Environment variables
 .env
 .env.*
 !.env.example
 
-# Config files with sensitive data
-hardhat.config.ts
-layerzero.config.ts
 
 # Node
 node_modules/
@@ -52,7 +49,6 @@ temp_*
 */archive/
 
 # Generated files
-remappings.txt
 foundry.toml
 
 # Allow important project files

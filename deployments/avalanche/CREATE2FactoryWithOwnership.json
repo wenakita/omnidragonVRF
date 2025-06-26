@@ -1,0 +1,403 @@
+{
+  "address": "0xAA28020DDA6b954D16208eccF873D79AC6533833",
+  "abi": [
+    {
+      "inputs": [],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "OwnableUnauthorizedAccount",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnableInvalidOwner",
+      "type": "error"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "deployer",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "deployed",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "salt",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "contractType",
+          "type": "string"
+        }
+      ],
+      "name": "ContractDeployed",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes[]",
+          "name": "bytecodes",
+          "type": "bytes[]"
+        },
+        {
+          "internalType": "bytes32[]",
+          "name": "salts",
+          "type": "bytes32[]"
+        },
+        {
+          "internalType": "string[]",
+          "name": "types",
+          "type": "string[]"
+        }
+      ],
+      "name": "batchDeploy",
+      "outputs": [
+        {
+          "internalType": "address[]",
+          "name": "deployed",
+          "type": "address[]"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "salt",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "bytecodeHash",
+          "type": "bytes32"
+        }
+      ],
+      "name": "computeAddress",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "contractTypes",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes",
+          "name": "bytecode",
+          "type": "bytes"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "salt",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "string",
+          "name": "contractType",
+          "type": "string"
+        }
+      ],
+      "name": "deploy",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "deployed",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "name": "deploymentBySalt",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "deploymentsByDeployer",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes",
+          "name": "bytecode",
+          "type": "bytes"
+        },
+        {
+          "internalType": "string",
+          "name": "contractType",
+          "type": "string"
+        }
+      ],
+      "name": "deployWithAutoSalt",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "deployed",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "deployed",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "emergencyTransferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "deployer",
+          "type": "address"
+        }
+      ],
+      "name": "getDeployments",
+      "outputs": [
+        {
+          "internalType": "address[]",
+          "name": "",
+          "type": "address[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "isDeployedContract",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "renounceOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "***REDACTED_FOR_LIVE_STREAM***",
+  "receipt": {
+    "to": null,
+    "from": "***REDACTED_FOR_LIVE_STREAM***",
+    "contractAddress": "0xAA28020DDA6b954D16208eccF873D79AC6533833",
+    "transactionIndex": "***REDACTED***",
+    "gasUsed": "***REDACTED***",
+    "logsBloom": "***REDACTED***",
+    "blockHash": "***REDACTED_FOR_LIVE_STREAM***",
+    "transactionHash": "***REDACTED_FOR_LIVE_STREAM***",
+    "blockNumber": "***REDACTED***",
+    "confirmations": "***REDACTED***",
+    "cumulativeGasUsed": "***REDACTED***",
+    "effectiveGasPrice": "***REDACTED***",
+    "status": 1,
+    "type": 2,
+    "byzantium": true
+  },
+  "args": [],
+  "numDeployments": 1,
+  "solcInputHash": "***REDACTED_FOR_LIVE_STREAM***",
+  "metadata": {
+    "name": "CREATE2FactoryWithOwnership",
+    "chainId": "43114",
+    "network": "avalanche",
+    "deployer": "***REDACTED_FOR_LIVE_STREAM***",
+    "deploymentTimestamp": "***REDACTED_FOR_LIVE_STREAM***",
+    "blockNumber": "***REDACTED***",
+    "gasPrice": "25000000000",
+    "gasLimit": "15000000",
+    "compiler": {
+      "version": "0.8.22+commit.4fc1097e",
+      "settings": {
+        "optimizer": {
+          "enabled": true,
+          "runs": 1
+        },
+        "viaIR": true,
+        "evmVersion": "paris"
+      }
+    },
+    "verification": {
+      "status": "pending",
+      "explorer": "https://snowtrace.io",
+      "explorerUrl": "https://snowtrace.io/address/0xAA28020DDA6b954D16208eccF873D79AC6533833",
+      "flattenedSource": "deployments/avalanche/avalanche-factory-flattened.sol",
+      "verificationSettings": {
+        "contractName": "CREATE2FactoryWithOwnership",
+        "compilerVersion": "v0.8.22+commit.4fc1097e",
+        "optimization": true,
+        "runs": 1,
+        "evmVersion": "paris",
+        "licenseType": "MIT License (3)",
+        "constructorArguments": ""
+      }
+    },
+    "deterministic": {
+      "sameAddressAsNetworks": ["sonic"],
+      "create2Salt": "***REDACTED_FOR_LIVE_STREAM***",
+      "create2Factory": "deterministic deployment"
+    },
+    "liveStreamingSafe": true,
+    "sensitiveDataMasked": true
+  }
+} 

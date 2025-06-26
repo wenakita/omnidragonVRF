@@ -4,25 +4,45 @@
   "private": true,
   "scripts": {
     "deploy": "npx hardhat lz:deploy",
-    "wire": "npx hardhat lz:oapp:wire",
-    "config": "npx hardhat lz:oapp:config:get",
-    "compile": "npx hardhat compile"
+    "wire": "npx hardhat lz:oapp:wire --oapp-config layerzero.config.ts",
+    "wire-manual": "npx hardhat run scripts/wire-layerzero-config.js",
+    "config": "npx hardhat lz:oapp:config:get --oapp-config layerzero.config.ts",
+    "config-check": "npx hardhat lz:oapp:config:get --oapp-config layerzero.config.ts",
+    "set-peers": "npx hardhat lz:oapp:setPeer --oapp-config layerzero.config.ts",
+    "set-libraries": "npx hardhat lz:oapp:config:set --oapp-config layerzero.config.ts",
+    "compile": "npx hardhat compile",
+    "deploy:complete": "npx ts-node scripts/deploy-complete-contracts.ts",
+    "test:complete": "npx ts-node scripts/test-complete-system.ts",
+    "test:vrf": "npx ts-node scripts/test-vrf-integrator.js",
+    "test:instant": "npx ts-node scripts/test-instant-lottery.js",
+    "debug": "npx ts-node scripts/debug-lottery.js"
   },
   "devDependencies": {
-    "@layerzerolabs/lz-definitions": "^2.3.0",
+    "@layerzerolabs/devtools-evm": "~2.0.0",
+    "@layerzerolabs/devtools-evm-hardhat": "^3.1.0",
+    "@layerzerolabs/lz-definitions": "^3.0.104",
     "@layerzerolabs/lz-evm-messagelib-v2": "^3.0.102",
+    "@layerzerolabs/lz-evm-oapp-v2": "^3.0.103",
     "@layerzerolabs/lz-evm-protocol-v2": "^3.0.102",
     "@layerzerolabs/oapp-evm": "^0.3.0",
-    "@layerzerolabs/toolbox-hardhat": "^0.6.0",
+    "@layerzerolabs/toolbox-hardhat": "^0.6.11",
     "@nomicfoundation/hardhat-ethers": "^3.0.0",
     "@nomicfoundation/hardhat-verify": "^2.0.14",
     "@nomiclabs/hardhat-ethers": "^2.2.3",
-    "@openzeppelin/contracts": "^5.0.0",
+    "@openzeppelin/contracts": "^5.3.0",
     "dotenv": "^16.5.0",
-    "hardhat": "^2.24.0",
-    "hardhat-deploy": "^1.0.3",
+    "hardhat": "^2.24.3",
+    "hardhat-deploy": "^0.12.4",
+    "hardhat-preprocessor": "^0.1.5",
     "solidity-bytes-utils": "^0.8.4",
     "ts-node": "^10.9.2",
-    "typescript": "^5.0.0"
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "@chainlink/contracts": "^1.4.0",
+    "@layerzerolabs/lz-v2-utilities": "^3.0.104",
+    "@types/node": "^20.0.0",
+    "axios": "^1.10.0",
+    "form-data": "^4.0.3"
   }
 }

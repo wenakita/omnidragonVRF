@@ -1,0 +1,14 @@
+{
+  "address": "0xBb842C8fe708009A57D55Dd44759631049d187bb",
+  "timestamp": "2025-06-21T09:45:43.056Z",
+  "guids": {
+    "sonicscan": "ni63kheittzcnns6qgrgt45jfdw3j9ma5enpmzxwgly3hvqdev",
+    "basescan": "myau5ucmvdvaabu7qzwpt1jcek8zn9tsdrf6ftvzbdiai5fy8j",
+    "arbiscan": "r4x1xctljtknggitp95qgmmbkreqvimwy24mgfruk6g83nwdrt"
+  },
+  "explorerLinks": {
+    "sonic": "https://sonicscan.org/address/0xBb842C8fe708009A57D55Dd44759631049d187bb#code",
+    "base": "https://basescan.org/address/0xBb842C8fe708009A57D55Dd44759631049d187bb#code",
+    "arbitrum": "https://arbiscan.io/address/0xBb842C8fe708009A57D55Dd44759631049d187bb#code"
+  }
+}
