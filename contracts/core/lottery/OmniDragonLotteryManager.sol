@@ -5,7 +5,7 @@ import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import { SonicFeeMHelper } from "../../libraries/core/SonicFeeMHelper.sol";
+
 import { veDRAGONMath } from "../../libraries/math/veDRAGONMath.sol";
 import { IChainlinkVRFIntegratorV2_5 } from "../../interfaces/external/chainlink/IChainlinkVRFIntegratorV2_5.sol";
 import { MessagingReceipt } from "../../../lib/devtools/packages/oapp-evm/contracts/oapp/OAppSender.sol";
@@ -138,7 +138,7 @@ contract OmniDragonLotteryManager is Ownable, ReentrancyGuard, IRandomWordsCallb
         });
         
         // Register for Sonic FeeM automatically
-        SonicFeeMHelper.registerForFeeM();
+        // No-op - FeeM registration disabled
     }
 
     // ============ MODIFIERS ============
@@ -712,7 +712,6 @@ contract OmniDragonLotteryManager is Ownable, ReentrancyGuard, IRandomWordsCallb
      * @return isRegistered Whether the contract is registered for fee monetization
      */
     function checkFeeMStatus() external view returns (bool isRegistered) {
-        return SonicFeeMHelper.isRegisteredForFeeM();
     }
 
     // Required to receive ETH

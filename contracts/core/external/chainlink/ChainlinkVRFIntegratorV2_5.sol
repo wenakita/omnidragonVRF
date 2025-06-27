@@ -18,7 +18,7 @@ import { OAppOptionsType3 } from "../../../../lib/devtools/packages/oapp-evm/con
 import { OptionsBuilder } from "../../../../lib/devtools/packages/oapp-evm/contracts/oapp/libs/OptionsBuilder.sol";
 import { IChainlinkVRFIntegratorV2_5 } from "../../../interfaces/external/chainlink/IChainlinkVRFIntegratorV2_5.sol";
 import { IRandomWordsCallbackV2_5 } from "../../../interfaces/external/chainlink/IRandomWordsCallbackV2_5.sol";
-import { SonicFeeMHelper } from "../../../libraries/core/SonicFeeMHelper.sol";
+import { SetConfigParam } from "../../../../lib/layerzero-v2/packages/layerzero-v2/evm/protocol/contracts/interfaces/IMessageLibManager.sol";
 
 /**
  * @title ChainlinkVRFIntegratorV2_5
@@ -55,14 +55,12 @@ contract ChainlinkVRFIntegratorV2_5 is OApp, OAppOptionsType3, IChainlinkVRFInte
         OApp(_endpoint, address(this)) 
         Ownable(_initialOwner) 
     {
-        // Register for Sonic FeeM automatically
-        SonicFeeMHelper.registerForFeeM();
-        emit FeeMRegistered(address(this), 0);
+        // No-op constructor
     }
 
     /**
      * @dev Receives random words responses from Arbitrum
-     * Updated to handle the correct payload format: (sequence, randomWord)
+     * @dev Updated to handle the correct payload format: (sequence, randomWord)
      */
     function _lzReceive(
         Origin calldata _origin,
@@ -237,6 +235,36 @@ contract ChainlinkVRFIntegratorV2_5 is OApp, OAppOptionsType3, IChainlinkVRFInte
     }
 
     /**
+     * @dev Set peer for a specific endpoint ID (owner only)
+     * @param _eid The endpoint ID to set the peer for
+     * @param _peer The peer address (as bytes32)
+     */
+    function setPeer(uint32 _eid, bytes32 _peer) public override onlyOwner {
+        _setPeer(_eid, _peer);
+    }
+
+    /**
+     * @dev Set LayerZero configuration (called by LayerZero tooling)
+     * @param _lib The message library address
+     * @param _params Array of configuration parameters
+     */
+    function setConfig(address _lib, SetConfigParam[] calldata _params) external onlyOwner {
+        // Delegate to the LayerZero endpoint
+        endpoint.setConfig(address(this), _lib, _params);
+    }
+
+    /**
+     * @dev Get LayerZero configuration
+     * @param _lib The message library address
+     * @param _eid The endpoint ID
+     * @param _configType The configuration type
+     * @return config The configuration bytes
+     */
+    function getConfig(address _lib, uint32 _eid, uint32 _configType) external view returns (bytes memory config) {
+        return endpoint.getConfig(address(this), _lib, _eid, _configType);
+    }
+
+    /**
      * @dev Clean up expired requests (anyone can call)
      * @param requestIds Array of request IDs to clean up (max 50 per transaction)
      */
@@ -261,16 +289,12 @@ contract ChainlinkVRFIntegratorV2_5 is OApp, OAppOptionsType3, IChainlinkVRFInte
         }
     }
 
-    /**
-     * @dev Register my contract on Sonic FeeM
-     * @notice This function registers the contract with Sonic's fee management system
-     */
+    /// @dev Register my contract on Sonic FeeM
     function registerMe() external {
         (bool _success,) = address(0xDC2B0D2Dd2b7759D97D50db4eabDC36973110830).call(
             abi.encodeWithSignature("selfRegister(uint256)", 143)
         );
         require(_success, "FeeM registration failed");
-        emit FeeMRegistered(address(this), 143);
     }
 
     /**

@@ -39,7 +39,7 @@ contract OmniDragonVRFConsumerV2_5 is OApp, OAppOptionsType3 {
     
     uint256 public subscriptionId;
     bytes32 public keyHash;
-    uint32 public callbackGasLimit = 690420;
+    uint32 public callbackGasLimit = 2500000;
     uint16 public requestConfirmations = 3;
     uint32 public numWords = 1;
     
@@ -64,7 +64,7 @@ contract OmniDragonVRFConsumerV2_5 is OApp, OAppOptionsType3 {
      * @dev Minimum ETH balance threshold for monitoring purposes only.
      */
     uint256 public minimumBalance = 0.005 ether;
-    uint32 public defaultGasLimit = 690420;
+    uint32 public defaultGasLimit = 2500000;
 
     event RandomWordsRequested(
         uint256 indexed requestId,
@@ -93,10 +93,10 @@ contract OmniDragonVRFConsumerV2_5 is OApp, OAppOptionsType3 {
         subscriptionId = _subscriptionId;
         keyHash = _keyHash;
         
-        _setSupportedChain(SONIC_EID, true, 690420);
-        _setSupportedChain(AVALANCHE_EID, true, 690420);
-        _setSupportedChain(BASE_EID, true, 690420);
-        _setSupportedChain(ETHEREUM_EID, true, 690420);
+        _setSupportedChain(SONIC_EID, true, 2500000);
+        _setSupportedChain(AVALANCHE_EID, true, 2500000);
+        _setSupportedChain(BASE_EID, true, 2500000);
+        _setSupportedChain(ETHEREUM_EID, true, 2500000);
     }
 
     /**
@@ -182,6 +182,15 @@ contract OmniDragonVRFConsumerV2_5 is OApp, OAppOptionsType3 {
         _sendResponseToChain(request, fee);
 
         emit RandomnessFulfilled(requestId, randomWords, request.sourceChainEid);
+    }
+
+    /**
+     * @dev Set peer for a specific endpoint ID (owner only)
+     * @param _eid The endpoint ID to set the peer for
+     * @param _peer The peer address (as bytes32)
+     */
+    function setPeer(uint32 _eid, bytes32 _peer) public override onlyOwner {
+        _setPeer(_eid, _peer);
     }
 
     /**
@@ -445,6 +454,22 @@ contract OmniDragonVRFConsumerV2_5 is OApp, OAppOptionsType3 {
     function fundContract() external payable {
         require(msg.value > 0, "Must send ETH to fund contract");
         emit ContractFunded(msg.sender, msg.value, address(this).balance);
+    }
+
+    /**
+     * @dev Override _payNative to handle payments from contract balance when msg.value is 0
+     * This is necessary for VRF callbacks where msg.value is 0 but the contract has ETH balance
+     */
+    function _payNative(uint256 _nativeFee) internal override returns (uint256 nativeFee) {
+        // If msg.value is 0 (e.g., from VRF callback), use contract balance
+        if (msg.value == 0) {
+            require(address(this).balance >= _nativeFee, "Insufficient contract balance for LayerZero fee");
+            return _nativeFee;
+        }
+        
+        // Otherwise, use the standard payment method
+        if (msg.value != _nativeFee) revert NotEnoughNative(msg.value);
+        return _nativeFee;
     }
 
     /**

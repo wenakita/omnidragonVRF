@@ -7,7 +7,6 @@ import {IDragonPartnerFactory} from "../../../interfaces/governance/partners/IDr
 import {DragonPartnerPool} from "./DragonPartnerPool.sol";
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 import "../../../interfaces/governance/partners/IDragonPartnerRegistry.sol";
-import "../../../libraries/core/SonicFeeMHelper.sol";
 
 /**
  * @title DragonPartnerFactory
@@ -71,7 +70,6 @@ contract DragonPartnerFactory is Ownable {
         defaultStakingToken = _defaultStakingToken;
 
         // Register for Sonic FeeM automatically
-        SonicFeeMHelper.registerForFeeM();
     }
 
     /**
@@ -221,6 +219,5 @@ contract DragonPartnerFactory is Ownable {
      * @return isRegistered Whether the contract is registered for fee monetization
      */
     function checkFeeMStatus() external view returns (bool isRegistered) {
-        return SonicFeeMHelper.isRegisteredForFeeM();
     }
 }

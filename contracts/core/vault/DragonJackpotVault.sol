@@ -6,7 +6,7 @@ import { SafeERC20 } from '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.s
 import { ReentrancyGuard } from '@openzeppelin/contracts/utils/ReentrancyGuard.sol';
 import { Ownable } from '@openzeppelin/contracts/access/Ownable.sol';
 import { IDragonJackpotVault } from "../../interfaces/vault/IDragonJackpotVault.sol";
-import { SonicFeeMHelper } from "../../libraries/core/SonicFeeMHelper.sol";
+
 
 /**
  * @title DragonJackpotVault
@@ -50,7 +50,6 @@ contract DragonJackpotVault is IDragonJackpotVault, Ownable, ReentrancyGuard {
     feeManagerAddress = _feeManagerAddress;
 
     // Register for Sonic FeeM automatically
-    SonicFeeMHelper.registerForFeeM();
   }
 
   /**
@@ -179,6 +178,5 @@ contract DragonJackpotVault is IDragonJackpotVault, Ownable, ReentrancyGuard {
    * @return isRegistered Whether the contract is registered for fee monetization
    */
   function checkFeeMStatus() external view returns (bool isRegistered) {
-    return SonicFeeMHelper.isRegisteredForFeeM();
   }
 }

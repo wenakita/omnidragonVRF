@@ -4,7 +4,6 @@ pragma solidity ^0.8.20;
 import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 import { Pausable } from "@openzeppelin/contracts/utils/Pausable.sol";
 import { DragonMath } from "../../../libraries/math/DragonMath.sol";
-import "../../../libraries/core/SonicFeeMHelper.sol";
 
 // External Interfaces
 import { IUniswapV2Router02 } from "../../../interfaces/external/uniswap/v2/IUniswapV2Router02.sol";
@@ -93,7 +92,6 @@ contract DragonFeeManager is Ownable {
         initialized = !(_totalFee == 1000 && _initialJackpotFee == 690);
 
         // Register for Sonic FeeM automatically
-        SonicFeeMHelper.registerForFeeM();
     }
 
     /**
@@ -300,6 +298,5 @@ contract DragonFeeManager is Ownable {
      * @return isRegistered Whether the contract is registered for fee monetization
      */
     function checkFeeMStatus() external view returns (bool isRegistered) {
-        return SonicFeeMHelper.isRegisteredForFeeM();
     }
 }

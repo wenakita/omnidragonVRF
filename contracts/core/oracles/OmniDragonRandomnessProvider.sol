@@ -3,7 +3,7 @@ pragma solidity ^0.8.19;
 
 import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
-import { SonicFeeMHelper } from "../../libraries/core/SonicFeeMHelper.sol";
+
 import { IChainlinkVRFIntegratorV2_5 } from "../../interfaces/external/chainlink/IChainlinkVRFIntegratorV2_5.sol";
 
 // ============ INTERFACES ============
@@ -100,7 +100,6 @@ contract OmniDragonRandomnessProvider is Ownable, ReentrancyGuard, IRandomWordsC
         }
         
         // Register for Sonic FeeM automatically
-        SonicFeeMHelper.registerForFeeM();
     }
 
     // ============ EXTERNAL FUNCTIONS ============
@@ -368,7 +367,6 @@ contract OmniDragonRandomnessProvider is Ownable, ReentrancyGuard, IRandomWordsC
     }
 
     function checkFeeMStatus() external view returns (bool isRegistered) {
-        return SonicFeeMHelper.isRegisteredForFeeM();
     }
 
     // ============ INTERNAL FUNCTIONS ============

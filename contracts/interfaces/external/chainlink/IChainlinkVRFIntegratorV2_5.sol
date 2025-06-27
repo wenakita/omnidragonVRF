@@ -90,7 +90,7 @@ interface IChainlinkVRFIntegratorV2_5 {
     /**
      * @dev Register contract on Sonic FeeM
      */
-    function registerMe() external;
+    function registerMe() external; // TEMPORARILY DISABLED - requires valid FeeM Project ID
 
     /**
      * @dev Emergency withdraw (owner only)

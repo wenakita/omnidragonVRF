@@ -6,7 +6,7 @@ import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.s
 import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import { Pausable } from "@openzeppelin/contracts/utils/Pausable.sol";
-import { SonicFeeMHelper } from "../../libraries/core/SonicFeeMHelper.sol";
+
 
 /**
  * @title DragonJackpotDistributor
@@ -84,7 +84,6 @@ contract DragonJackpotDistributor is IDragonJackpotDistributor, Ownable, Reentra
         authorizedDistributors[_swapTrigger] = true;
 
         // Register for Sonic FeeM automatically
-        SonicFeeMHelper.registerForFeeM();
     }
 
     /**
@@ -396,6 +395,5 @@ contract DragonJackpotDistributor is IDragonJackpotDistributor, Ownable, Reentra
      * @return isRegistered Whether the contract is registered for fee monetization
      */
     function checkFeeMStatus() external view returns (bool isRegistered) {
-        return SonicFeeMHelper.isRegisteredForFeeM();
     }
 }

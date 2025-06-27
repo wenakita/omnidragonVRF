@@ -8,7 +8,6 @@ import { SafeERC20 } from '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.s
 import { ReentrancyGuard } from '@openzeppelin/contracts/utils/ReentrancyGuard.sol';
 import { IDragonRevenueDistributor } from '../../../interfaces/governance/fees/IDragonRevenueDistributor.sol';
 import { IveDRAGON } from '../../../interfaces/tokens/IveDRAGON.sol';
-import '../../../libraries/core/SonicFeeMHelper.sol';
 
 /**
  * @title veDRAGONRevenueDistributor
@@ -67,7 +66,6 @@ contract veDRAGONRevenueDistributor is IDragonRevenueDistributor, Ownable, Reent
     epochEndTime[1] = block.timestamp + epochDuration;
 
     // Register for Sonic FeeM automatically
-    SonicFeeMHelper.registerForFeeM();
   }
 
   /**
@@ -373,6 +371,5 @@ contract veDRAGONRevenueDistributor is IDragonRevenueDistributor, Ownable, Reent
    * @return isRegistered Whether the contract is registered for fee monetization
    */
   function checkFeeMStatus() external view returns (bool isRegistered) {
-    return SonicFeeMHelper.isRegisteredForFeeM();
   }
 }

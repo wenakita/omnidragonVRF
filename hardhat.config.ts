@@ -28,7 +28,13 @@ function getRemappings() {
         .map((line) => line.trim().split('='))
 }
 
-const config: HardhatUserConfig = {
+const config: any = {
+    layerZero: {
+        // LayerZero V2 configuration
+        deploymentSourcePackages: [],
+        // Include LayerZero V2 artifacts
+        artifactSourcePackages: ['@layerzerolabs/lz-evm-sdk-v2', '@layerzerolabs/test-devtools-evm-hardhat'],
+    } as any,
     paths: {
         cache: 'cache/hardhat',
         sources: './contracts',
@@ -83,7 +89,7 @@ const config: HardhatUserConfig = {
     },
     networks: {
         sonic: {
-            eid: EndpointId.SONIC_V2_MAINNET,
+            eid: 30332, // Sonic EID - using numeric value since SONIC_V2_MAINNET might not be defined
             url: process.env.RPC_URL_SONIC || 'https://rpc.soniclabs.com', // Using a public RPC
             accounts,
             chainId: 146,
@@ -148,7 +154,7 @@ const config: HardhatUserConfig = {
         apiKey: {
             sonic: process.env.SONICSCAN_API_KEY || 'YW21H25FAP339T8GK8HBXYA87BZETH9DCU',
             avalanche: process.env.SNOWTRACE_API_KEY || 'YW21H25FAP339T8GK8HBXYA87BZETH9DCU',
-            // You might need to add API keys for Arbitrum, Base, Ethereum, BSC if you plan to verify contracts
+            arbitrumOne: process.env.ARBISCAN_API_KEY || 'YW21H25FAP339T8GK8HBXYA87BZETH9DCU',
         },
         customChains: [
             {

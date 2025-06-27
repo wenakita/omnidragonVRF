@@ -23,7 +23,6 @@ import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.s
 import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import { IveDRAGONBoostManager } from "../../../interfaces/governance/partners/IveDRAGONBoostManager.sol";
 import { IDragonPartnerRegistry } from "../../../interfaces/governance/partners/IDragonPartnerRegistry.sol";
-import "../../../libraries/core/SonicFeeMHelper.sol";
 
 /**
  * @title DragonPartnerFeeDistributor
@@ -101,7 +100,6 @@ contract DragonPartnerFeeDistributor is Ownable, ReentrancyGuard {
         rewardPeriods[currentPeriod].endTime = block.timestamp + periodDuration;
 
         // Register for Sonic FeeM automatically
-        SonicFeeMHelper.registerForFeeM();
     }
 
     /**
@@ -434,6 +432,5 @@ contract DragonPartnerFeeDistributor is Ownable, ReentrancyGuard {
      * @return isRegistered Whether the contract is registered for fee monetization
      */
     function checkFeeMStatus() external view returns (bool isRegistered) {
-        return SonicFeeMHelper.isRegisteredForFeeM();
     }
 }

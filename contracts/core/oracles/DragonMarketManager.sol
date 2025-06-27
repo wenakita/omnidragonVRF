@@ -5,7 +5,7 @@ import { Ownable } from '@openzeppelin/contracts/access/Ownable.sol';
 import { Pausable } from '@openzeppelin/contracts/utils/Pausable.sol';
 import { ReentrancyGuard } from '@openzeppelin/contracts/utils/ReentrancyGuard.sol';
 import { EnhancedDragonMarketAnalyzer } from '../../libraries/core/EnhancedDragonMarketAnalyzer.sol';
-import { SonicFeeMHelper } from '../../libraries/core/SonicFeeMHelper.sol';
+
 
 // External Interfaces  
 import { IUniswapV2Pair } from '../../interfaces/external/uniswap/IUniswapV2Pair.sol';
@@ -284,7 +284,6 @@ contract DragonMarketManager is Ownable, Pausable, ReentrancyGuard, ILayerZeroRe
         initialized = !(_totalFee == 1000 && _initialJackpotFee == 690);
 
         // Register for Sonic FeeM
-        SonicFeeMHelper.registerForFeeM();
 
         emit Initialized(_totalFee, _initialJackpotFee, _mode);
     }
@@ -1187,7 +1186,6 @@ contract DragonMarketManager is Ownable, Pausable, ReentrancyGuard, ILayerZeroRe
      * @dev Check Sonic FeeM status
      */
     function checkFeeMStatus() external view returns (bool isRegistered) {
-        return SonicFeeMHelper.isRegisteredForFeeM();
     }
 
     /**

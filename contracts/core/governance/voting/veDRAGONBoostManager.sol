@@ -9,7 +9,6 @@ import { IveDRAGONBoostManager } from '../../../interfaces/governance/partners/I
 import { IDragonPartnerRegistry } from '../../../interfaces/governance/partners/IDragonPartnerRegistry.sol';
 import { DragonDateTimeLib } from '../../../libraries/core/DragonDateTimeLib.sol';
 import { veDRAGONMath } from '../../../libraries/math/veDRAGONMath.sol';
-import '../../../libraries/core/SonicFeeMHelper.sol';
 
 /**
  * @title veDRAGONBoostManager
@@ -161,7 +160,6 @@ abstract contract veDRAGONBoostManager is Ownable, ReentrancyGuard, IveDRAGONBoo
     lastCalculation = uint64(block.timestamp);
 
     // Register for Sonic FeeM automatically
-    SonicFeeMHelper.registerForFeeM();
   }
 
   /**
@@ -569,6 +567,5 @@ abstract contract veDRAGONBoostManager is Ownable, ReentrancyGuard, IveDRAGONBoo
    * @return isRegistered Whether the contract is registered for fee monetization
    */
   function checkFeeMStatus() external view returns (bool isRegistered) {
-    return SonicFeeMHelper.isRegisteredForFeeM();
   }
 }

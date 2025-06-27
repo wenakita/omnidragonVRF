@@ -187,14 +187,14 @@ contract omniDRAGON is ERC20, Ownable, ReentrancyGuard, IomniDRAGON {
         buyFees = Fees({
             jackpot: 690,   // 6.9%
             veDRAGON: 241,  // 2.41%
-            burn: 69,       // 0.69%
+            burn: 0,       // 0%
             total: 1000     // 10%
         });
 
         sellFees = Fees({
             jackpot: 690,  // 6.9%
             veDRAGON: 241,  // 2.41%
-            burn: 69,      // 0.69%
+            burn: 0,      // 0%
             total: 1000     // 10%
         });
 

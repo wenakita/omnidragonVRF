@@ -6,7 +6,7 @@ import '../../interfaces/config/IChainRegistry.sol';
 import '../../interfaces/external/layerzero/ILayerZeroEndpoint.sol';
 import { Pausable } from "@openzeppelin/contracts/utils/Pausable.sol";
 import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
-import '../../libraries/core/SonicFeeMHelper.sol';
+
 
 /**
  * @title ChainRegistry
@@ -110,7 +110,6 @@ contract ChainRegistry is IChainRegistry, Ownable, Pausable, ReentrancyGuard {
     authorizedSigners[_initialOwner] = true;
 
     // Register for Sonic FeeM automatically
-    SonicFeeMHelper.registerForFeeM();
   }
 
   /**
@@ -572,7 +571,6 @@ contract ChainRegistry is IChainRegistry, Ownable, Pausable, ReentrancyGuard {
    * @return isRegistered Whether the contract is registered for fee monetization
    */
   function checkFeeMStatus() external view returns (bool isRegistered) {
-    return SonicFeeMHelper.isRegisteredForFeeM();
   }
 
   mapping(uint256 => uint32) public chainIdToEid;

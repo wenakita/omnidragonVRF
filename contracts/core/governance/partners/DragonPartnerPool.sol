@@ -25,7 +25,6 @@ import { Pausable } from '@openzeppelin/contracts/utils/Pausable.sol';
 import { IDragonPartnerRegistry } from '../../../interfaces/governance/partners/IDragonPartnerRegistry.sol';
 import { IveDRAGONBoostManager } from '../../../interfaces/governance/partners/IveDRAGONBoostManager.sol';
 import { IJackpot } from '../../../interfaces/external/IJackpot.sol';
-import '../../../libraries/core/SonicFeeMHelper.sol';
 
 /**
  * @title DragonPartnerPool
@@ -108,7 +107,6 @@ contract DragonPartnerPool is Ownable, ReentrancyGuard, Pausable {
     lastBoostUpdate = block.timestamp;
 
     // Register for Sonic FeeM automatically
-    SonicFeeMHelper.registerForFeeM();
   }
 
   /**
@@ -399,6 +397,5 @@ contract DragonPartnerPool is Ownable, ReentrancyGuard, Pausable {
    * @return isRegistered Whether the contract is registered for fee monetization
    */
   function checkFeeMStatus() external view returns (bool isRegistered) {
-    return SonicFeeMHelper.isRegisteredForFeeM();
   }
 }
