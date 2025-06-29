@@ -1,0 +1,16 @@
+{
+  "network": "Sonic Mainnet",
+  "networkKey": "sonic",
+  "chainId": 146,
+  "eid": 30332,
+  "endpoint": "0x567eB27f7EA8c69988e30B045987Ad58A597685C",
+  "create2Factory": "0xAA28020DDA6b954D16208eccF873D79AC6533833",
+  "omniDragonAddress": "0x7f7b54cBbfBBc4C5cc6D0774ec7C95669C3d5210",
+  "universalSalt": "0x78753eba79bcf9486ea18ff7802358d0829a363c773dc7b41a5758a609e708b4",
+  "owner": "0xDDd0050d1E084dFc72d5d06447Cc10bcD3fEF60F",
+  "deployer": "0xDDd0050d1E084dFc72d5d06447Cc10bcD3fEF60F",
+  "deployedAt": "2025-06-29T03:22:13.268Z",
+  "transactionHash": "0xaeef68b6fc02b49c12ea7523f5fb991074658905a425c3c731ee808fa6054e48",
+  "blockNumber": 36390345,
+  "gasUsed": "5476229"
+}

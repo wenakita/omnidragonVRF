@@ -24,7 +24,7 @@ import { SetConfigParam } from "../../../../lib/layerzero-v2/packages/layerzero-
  * @title ChainlinkVRFIntegratorV2_5
  * @notice Resides on a source chain (e.g., Sonic). Called by a provider to get random words from a peer on a destination chain (e.g., Arbitrum).
  */
-contract ChainlinkVRFIntegratorV2_5 is OApp, OAppOptionsType3, IChainlinkVRFIntegratorV2_5 {
+contract ChainlinkVRFIntegratorV2_5 is OApp, OAppOptionsType3, IChainlinkVRFIntegratorV2_5, IRandomWordsCallbackV2_5 {
     using OptionsBuilder for bytes;
     
     // Constants
@@ -70,7 +70,7 @@ contract ChainlinkVRFIntegratorV2_5 is OApp, OAppOptionsType3, IChainlinkVRFInte
         bytes calldata
     ) internal override {
         require(peers[_origin.srcEid] == _origin.sender, "Unauthorized");
-        require(_payload.length == 40, "Invalid payload size"); // AUDIT FIX: uint64(8) + uint256(32) = 40 bytes
+        require(_payload.length == 64, "Invalid payload size"); // AUDIT FIX: abi.encode(uint64, uint256) = 64 bytes
 
         (uint64 sequence, uint256 randomWord) = abi.decode(_payload, (uint64, uint256));
         
@@ -248,10 +248,10 @@ contract ChainlinkVRFIntegratorV2_5 is OApp, OAppOptionsType3, IChainlinkVRFInte
      * @param _lib The message library address
      * @param _params Array of configuration parameters
      */
-    function setConfig(address _lib, SetConfigParam[] calldata _params) external onlyOwner {
-        // Delegate to the LayerZero endpoint
-        endpoint.setConfig(address(this), _lib, _params);
-    }
+    // function setConfig(address _lib, SetConfigParam[] calldata _params) external onlyOwner {
+    //     // Delegate to the LayerZero endpoint
+    //     endpoint.setConfig(address(this), _lib, _params);
+    // }
 
     /**
      * @dev Get LayerZero configuration
@@ -286,6 +286,138 @@ contract ChainlinkVRFIntegratorV2_5 is OApp, OAppOptionsType3, IChainlinkVRFInte
                 
                 emit RequestExpired(requestId, provider);
             }
+        }
+    }
+
+    // Enhanced storage for lottery functionality
+    mapping(uint64 => uint256) public sequenceToRandomWord;
+    mapping(uint64 => address) public sequenceToUser;
+    mapping(uint64 => uint256) public sequenceToSwapAmount;
+    mapping(uint64 => uint256) public sequenceToWinProbability;
+    
+    // Events for lottery processing
+    event InstantLotteryProcessed(address indexed user, uint256 swapAmount, bool won, uint256 reward);
+    event RandomnessStored(uint64 indexed sequence, uint256 randomWord, address user);
+
+    /**
+     * @dev Enhanced callback function for Instantaneous Lottery Token
+     * @param randomWords Array of random words received
+     * @param sequence The sequence number of the request
+     */
+    function receiveRandomWords(uint256[] memory randomWords, uint64 sequence) external override {
+        require(randomWords.length > 0, "No random words provided");
+        
+        uint256 randomness = randomWords[0];
+        
+        // Store the randomness for audit trail and potential future use
+        sequenceToRandomWord[sequence] = randomness;
+        
+        // Get lottery context for this sequence
+        address user = sequenceToUser[sequence];
+        uint256 swapAmount = sequenceToSwapAmount[sequence];
+        uint256 winProbability = sequenceToWinProbability[sequence];
+        
+        emit RandomnessStored(sequence, randomness, user);
+        
+        // Process instant lottery if we have valid context
+        if (user != address(0) && winProbability > 0) {
+            _processInstantLottery(sequence, randomness, user, swapAmount, winProbability);
+        }
+        
+        // Mark request as fulfilled and store random word
+        if (s_requests[sequence].exists) {
+            s_requests[sequence].fulfilled = true;
+            s_requests[sequence].randomWord = randomness;
+        }
+        
+        emit CallbackSucceeded(sequence, address(this));
+    }
+    
+    /**
+     * @dev Process instant lottery with received randomness
+     * @param sequence The request sequence number
+     * @param randomness The random number from VRF
+     * @param user The user who triggered the lottery
+     * @param swapAmount The swap amount that triggered the lottery
+     * @param winProbability The win probability in basis points (out of 10000)
+     */
+    function _processInstantLottery(
+        uint64 sequence,
+        uint256 randomness,
+        address user,
+        uint256 swapAmount,
+        uint256 winProbability
+    ) internal {
+        // Calculate win condition using modulo for uniform distribution
+        // winProbability is in basis points (1 BP = 0.01%, so 10000 = 100%)
+        bool won = (randomness % 10000) < winProbability;
+        
+        uint256 reward = 0;
+        
+        if (won) {
+            // Calculate reward based on current jackpot
+            // This is a placeholder - you'll need to integrate with your jackpot system
+            reward = _calculateLotteryReward(swapAmount);
+            
+            // Distribute reward to winner
+            if (reward > 0) {
+                _distributeLotteryReward(user, reward);
+            }
+        }
+        
+        // Clean up storage to save gas for future operations
+        delete sequenceToUser[sequence];
+        delete sequenceToSwapAmount[sequence];
+        delete sequenceToWinProbability[sequence];
+        
+        emit InstantLotteryProcessed(user, swapAmount, won, reward);
+    }
+    
+    /**
+     * @dev Set lottery context for a VRF request (called by lottery system)
+     * @param sequence The VRF request sequence
+     * @param user The user who triggered the lottery
+     * @param swapAmount The swap amount
+     * @param winProbability Win probability in basis points
+     */
+    function setLotteryContext(
+        uint64 sequence,
+        address user,
+        uint256 swapAmount,
+        uint256 winProbability
+    ) external {
+        // Add access control here - only authorized lottery contracts should call this
+        // require(authorizedLotteryContracts[msg.sender], "Unauthorized");
+        
+        sequenceToUser[sequence] = user;
+        sequenceToSwapAmount[sequence] = swapAmount;
+        sequenceToWinProbability[sequence] = winProbability;
+    }
+    
+    /**
+     * @dev Calculate lottery reward (placeholder implementation)
+     * @param swapAmount The swap amount that triggered the lottery
+     * @return reward The calculated reward amount
+     */
+    function _calculateLotteryReward(uint256 swapAmount) internal pure returns (uint256 reward) {
+        // Placeholder implementation - integrate with your jackpot distributor
+        // This could be a percentage of current jackpot, or based on swap amount
+        return swapAmount / 100; // Example: 1% of swap amount
+    }
+    
+    /**
+     * @dev Distribute lottery reward to winner (placeholder implementation)
+     * @param user The winner address
+     * @param reward The reward amount
+     */
+    function _distributeLotteryReward(address user, uint256 reward) internal {
+        // Placeholder implementation - integrate with your reward distribution system
+        // This might call your jackpot distributor or token contract
+        
+        // Example: Transfer ETH reward (if contract holds ETH)
+        if (address(this).balance >= reward) {
+            (bool success, ) = payable(user).call{value: reward}("");
+            require(success, "Reward transfer failed");
         }
     }
 

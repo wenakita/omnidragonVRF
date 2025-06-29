@@ -21,7 +21,7 @@ import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
-import { IveDRAGONBoostManager } from "../../../interfaces/governance/partners/IveDRAGONBoostManager.sol";
+import { IveDRAGONBoostManager } from "../../../interfaces/governance/voting/IveDRAGONBoostManager.sol";
 import { IDragonPartnerRegistry } from "../../../interfaces/governance/partners/IDragonPartnerRegistry.sol";
 
 /**

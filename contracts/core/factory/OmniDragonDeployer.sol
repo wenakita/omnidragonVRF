@@ -3,6 +3,7 @@ pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./CREATE2FactoryWithOwnership.sol";
+import "../tokens/omniDRAGON.sol";
 
 /**
  * @title OmniDragonDeployer
@@ -25,7 +26,10 @@ contract OmniDragonDeployer is Ownable {
     string public constant VERSION = "v1.0.0";
     
     // Base salt for OmniDragon universal contracts
-    bytes32 public constant OMNIDRAGON_BASE_SALT = keccak256("OMNIDRAGON_ECOSYSTEM_2024");
+    bytes32 public constant OMNIDRAGON_BASE_SALT = keccak256("OMNIDRAGON");
+    
+    // Chain Registry for LayerZero proxy functionality
+    address public chainRegistry;
     
     // Deployment tracking
     mapping(string => address) public deployedContracts; // contractName => address
@@ -34,7 +38,7 @@ contract OmniDragonDeployer is Ownable {
     
     // Universal contract types (same address across all chains)
     string[] public universalContractTypes = [
-        "OmniDragonToken",
+        "omniDRAGON",
         "OmniDragonLotteryManager", 
         "OmniDragonVRFConsumer",
         "OmniDragonMarketOracle",
@@ -44,7 +48,7 @@ contract OmniDragonDeployer is Ownable {
     // Chain-specific contract types (different address per chain)
     string[] public chainSpecificContractTypes = [
         "DragonRevenueDistributor",
-        "DragonFeeManager",
+        "OmniDragonFeeManager",
         "DragonJackpotVault",
         "DragonMarketOracle",
         "DragonJackpotDistributor"
@@ -67,6 +71,8 @@ contract OmniDragonDeployer is Ownable {
     
     event ContractTypeRegistered(string contractName, bool isUniversal);
     
+    event ChainRegistryUpdated(address indexed oldRegistry, address indexed newRegistry);
+    
     constructor(address _factory) Ownable(msg.sender) {
         require(_factory != address(0), "Factory cannot be zero address");
         factory = CREATE2FactoryWithOwnership(_factory);
@@ -85,6 +91,128 @@ contract OmniDragonDeployer is Ownable {
     }
     
     /**
+     * @dev Set the chain registry address for LayerZero proxy functionality
+     * @param _chainRegistry Address of the OmniDragonChainRegistry
+     */
+    function setChainRegistry(address _chainRegistry) external onlyOwner {
+        require(_chainRegistry != address(0), "Chain registry cannot be zero address");
+        address oldRegistry = chainRegistry;
+        chainRegistry = _chainRegistry;
+        emit ChainRegistryUpdated(oldRegistry, _chainRegistry);
+    }
+    
+    /**
+     * @dev Deploy omniDRAGON token using a specified LayerZero endpoint
+     * This allows flexible endpoint configuration while maintaining deterministic addresses
+     * @param _lzEndpoint The LayerZero endpoint address to use
+     * @param _delegate The delegate/owner address for the omniDRAGON token
+     * @return deployed Address of the deployed omniDRAGON token
+     */
+    function deployOmniDRAGON(address _lzEndpoint, address _delegate) external onlyOwner returns (address deployed) {
+        require(_lzEndpoint != address(0), "LayerZero endpoint cannot be zero address");
+        require(_delegate != address(0), "Delegate cannot be zero address");
+        require(deployedContracts["omniDRAGON"] == address(0), "omniDRAGON already deployed");
+        
+        // Generate bytecode with constructor arguments
+        // Constructor: constructor(address _lzEndpoint, address _delegate)
+        bytes memory bytecode = abi.encodePacked(
+            type(omniDRAGON).creationCode,
+            abi.encode(_lzEndpoint, _delegate)
+        );
+        
+        // Generate deterministic salt for universal deployment
+        bytes32 salt = generateUniversalSalt("omniDRAGON");
+        
+        // Deploy via CREATE2
+        deployed = factory.deploy(bytecode, salt, "omniDRAGON");
+        
+        // Track deployment
+        deployedContracts["omniDRAGON"] = deployed;
+        contractNames[deployed] = "omniDRAGON";
+        
+        emit UniversalContractDeployed("omniDRAGON", deployed, salt, block.chainid);
+    }
+    
+    /**
+     * @dev Deploy omniDRAGON token using chain registry as LayerZero endpoint proxy
+     * This ensures identical addresses across chains while using chain-specific endpoints
+     * @param _delegate The delegate/owner address for the omniDRAGON token
+     * @return deployed Address of the deployed omniDRAGON token
+     */
+    function deployOmniDRAGONWithRegistry(address _delegate) external onlyOwner returns (address deployed) {
+        require(chainRegistry != address(0), "Chain registry not set");
+        require(_delegate != address(0), "Delegate cannot be zero address");
+        require(deployedContracts["omniDRAGON"] == address(0), "omniDRAGON already deployed");
+        
+        // Generate bytecode with constructor arguments
+        bytes memory bytecode = abi.encodePacked(
+            type(omniDRAGON).creationCode,
+            abi.encode(chainRegistry, _delegate)
+        );
+        
+        // Generate deterministic salt for universal deployment
+        bytes32 salt = generateUniversalSalt("omniDRAGON");
+        
+        // Deploy via CREATE2
+        deployed = factory.deploy(bytecode, salt, "omniDRAGON");
+        
+        // Track deployment
+        deployedContracts["omniDRAGON"] = deployed;
+        contractNames[deployed] = "omniDRAGON";
+        
+        emit UniversalContractDeployed("omniDRAGON", deployed, salt, block.chainid);
+    }
+    
+    /**
+     * @dev Predict the address of omniDRAGON token across all chains
+     * @param _lzEndpoint The LayerZero endpoint address to use
+     * @param _delegate The delegate/owner address for the omniDRAGON token
+     * @return predicted The predicted address (same across all chains if same endpoint used)
+     */
+    function predictOmniDRAGONAddress(address _lzEndpoint, address _delegate) external view returns (address predicted) {
+        require(_lzEndpoint != address(0), "LayerZero endpoint cannot be zero address");
+        require(_delegate != address(0), "Delegate cannot be zero address");
+        
+        // Generate bytecode with constructor arguments
+        bytes memory bytecode = abi.encodePacked(
+            type(omniDRAGON).creationCode,
+            abi.encode(_lzEndpoint, _delegate)
+        );
+        
+        // Calculate bytecode hash
+        bytes32 bytecodeHash = keccak256(bytecode);
+        
+        // Generate deterministic salt
+        bytes32 salt = generateUniversalSalt("omniDRAGON");
+        
+        return factory.computeAddress(salt, bytecodeHash);
+    }
+    
+    /**
+     * @dev Predict the address of omniDRAGON token using chain registry as endpoint
+     * @param _delegate The delegate/owner address for the omniDRAGON token
+     * @return predicted The predicted address (same across all chains)
+     */
+    function predictOmniDRAGONAddressWithRegistry(address _delegate) external view returns (address predicted) {
+        require(chainRegistry != address(0), "Chain registry not set");
+        require(_delegate != address(0), "Delegate cannot be zero address");
+        
+        // Generate bytecode with constructor arguments
+        bytes memory bytecode = abi.encodePacked(
+            type(omniDRAGON).creationCode,
+            abi.encode(chainRegistry, _delegate)
+        );
+        
+        // Calculate bytecode hash
+        bytes32 bytecodeHash = keccak256(bytecode);
+        
+        // Generate deterministic salt
+        bytes32 salt = generateUniversalSalt("omniDRAGON");
+        
+        return factory.computeAddress(salt, bytecodeHash);
+    }
+    
+    /**
      * @dev Generate deterministic salt for universal contracts
      * @param contractName Name of the contract (e.g., "OmniDragonToken")
      * @return Deterministic salt that will be the same across all chains
@@ -99,7 +227,7 @@ contract OmniDragonDeployer is Ownable {
     
     /**
      * @dev Generate chain-specific salt for Dragon* contracts
-     * @param contractName Name of the contract (e.g., "DragonFeeManager")
+     * @param contractName Name of the contract (e.g., "OmniDragonFeeManager")
      * @return Chain-specific salt that will be different per chain
      */
     function generateChainSpecificSalt(string memory contractName) public view returns (bytes32) {
@@ -297,5 +425,25 @@ contract OmniDragonDeployer is Ownable {
      */
     function getChainId() public view returns (uint256) {
         return block.chainid;
+    }
+    
+    /**
+     * @dev Manually set a deployed contract address (emergency function)
+     * @param contractName Name of the contract
+     * @param contractAddress Address of the deployed contract
+     */
+    function setDeployedContract(string memory contractName, address contractAddress) public onlyOwner {
+        require(contractAddress != address(0), "Contract address cannot be zero");
+        
+        // Remove old tracking if exists
+        if (deployedContracts[contractName] != address(0)) {
+            delete contractNames[deployedContracts[contractName]];
+        }
+        
+        // Set new tracking
+        deployedContracts[contractName] = contractAddress;
+        contractNames[contractAddress] = contractName;
+        
+        emit UniversalContractDeployed(contractName, contractAddress, bytes32(0), block.chainid);
     }
 } 

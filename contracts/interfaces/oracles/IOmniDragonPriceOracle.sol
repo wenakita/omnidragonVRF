@@ -3,7 +3,8 @@ pragma solidity ^0.8.20;
 
 /**
  * @title IOmniDragonPriceOracle
- * @dev Interface for the pure OmniDragon Price Oracle
+ * @dev Interface for OmniDragon Price Oracle
+ * Handles multi-oracle price aggregation and market condition analysis
  */
 interface IOmniDragonPriceOracle {
     /**
@@ -59,6 +60,8 @@ interface IOmniDragonPriceOracle {
      * @param swapAmount Swap amount to add to statistics
      */
     function updateMarketConditions(uint256 swapAmount) external;
+
+
 
     /**
      * @dev Get oracle configuration for a specific oracle ID

@@ -4,8 +4,8 @@ pragma solidity ^0.8.20;
 import { Ownable } from '@openzeppelin/contracts/access/Ownable.sol';
 import { ReentrancyGuard } from '@openzeppelin/contracts/utils/ReentrancyGuard.sol';
 import { IveDRAGON } from '../../../interfaces/tokens/IveDRAGON.sol';
-import { IJackpot } from '../../../interfaces/shared/IJackpot.sol';
-import { IveDRAGONBoostManager } from '../../../interfaces/governance/partners/IveDRAGONBoostManager.sol';
+import { IDragonJackpotVault } from '../../../interfaces/lottery/IDragonJackpotVault.sol';
+import { IveDRAGONBoostManager } from '../../../interfaces/governance/voting/IveDRAGONBoostManager.sol';
 import { IDragonPartnerRegistry } from '../../../interfaces/governance/partners/IDragonPartnerRegistry.sol';
 import { DragonDateTimeLib } from '../../../libraries/core/DragonDateTimeLib.sol';
 import { veDRAGONMath } from '../../../libraries/math/veDRAGONMath.sol';
@@ -19,7 +19,7 @@ import { veDRAGONMath } from '../../../libraries/math/veDRAGONMath.sol';
  * https://x.com/sonicreddragon
  * https://t.me/sonicreddragon
  */
-abstract contract veDRAGONBoostManager is Ownable, ReentrancyGuard, IveDRAGONBoostManager {
+contract veDRAGONBoostManager is Ownable, ReentrancyGuard, IveDRAGONBoostManager {
   // === Custom Errors ===
   error ZeroAddress();
   error ZeroAmount();
@@ -37,7 +37,7 @@ abstract contract veDRAGONBoostManager is Ownable, ReentrancyGuard, IveDRAGONBoo
 
   // Core contract references
   IveDRAGON public immutable veDRAGON;
-  IJackpot public jackpot;
+  IDragonJackpotVault public jackpot;
   IDragonPartnerRegistry public partnerRegistry;
 
   // ===== BOOST PARAMETERS =====
@@ -146,13 +146,13 @@ abstract contract veDRAGONBoostManager is Ownable, ReentrancyGuard, IveDRAGONBoo
    * @param _jackpot Address of the jackpot contract
    * @param _partnerRegistry Address of the partner registry
    */
-  constructor(address _veDRAGON, address _jackpot, address _partnerRegistry) {
+  constructor(address _veDRAGON, address _jackpot, address _partnerRegistry) Ownable(msg.sender) {
     if (_veDRAGON == address(0)) revert ZeroAddress();
     if (_jackpot == address(0)) revert ZeroAddress();
     if (_partnerRegistry == address(0)) revert ZeroAddress();
 
     veDRAGON = IveDRAGON(_veDRAGON);
-    jackpot = IJackpot(_jackpot);
+    jackpot = IDragonJackpotVault(_jackpot);
     partnerRegistry = IDragonPartnerRegistry(_partnerRegistry);
 
     // Initialize period and calculation timestamp
@@ -329,7 +329,7 @@ abstract contract veDRAGONBoostManager is Ownable, ReentrancyGuard, IveDRAGONBoo
    */
   function setJackpot(address _jackpot) external onlyOwner {
     if (_jackpot == address(0)) revert ZeroAddress();
-    jackpot = IJackpot(_jackpot);
+    jackpot = IDragonJackpotVault(_jackpot);
     emit JackpotAddressUpdated(_jackpot);
   }
 

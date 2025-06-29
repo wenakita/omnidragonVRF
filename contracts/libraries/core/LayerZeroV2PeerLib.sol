@@ -272,7 +272,7 @@ library LayerZeroV2PeerLib {
         // Clear all peers
         for (uint256 i = 0; i < eids.length; i++) {
             uint32 eid = eids[i];
-            bytes32 peer = self.peers[eid];
+            // bytes32 peer = self.peers[eid]; // Unused variable removed
             delete self.peers[eid];
             delete self.peerExists[eid];
             delete self.eidToIndex[eid];

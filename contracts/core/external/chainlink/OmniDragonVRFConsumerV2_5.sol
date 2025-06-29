@@ -4,8 +4,13 @@ pragma solidity ^0.8.22;
 /**
  * @title OmniDragonVRFConsumerV2_5
  * @dev Multi-chain VRF Consumer that accepts requests from multiple chains
- *      (Sonic, Avalanche, etc.) and sends randomness back to the originating chain.
+ *      (Sonic, Avalanche, etc.) AND direct local requests from Arbitrum.
+ *      Sends randomness back to the originating chain or calls local callbacks.
  *      This acts as a centralized VRF hub on Arbitrum using Chainlink VRF 2.5.
+ *
+ * SUPPORTS:
+ * 1. Cross-chain requests via LayerZero (Sonic → Arbitrum → Response back to Sonic)
+ * 2. Direct local requests from Arbitrum contracts/users (Arbitrum → Callback on Arbitrum)
  *
  * https://x.com/sonicreddragon
  * https://t.me/sonicreddragon
@@ -19,10 +24,17 @@ import { OptionsBuilder } from "@layerzerolabs/oapp-evm/contracts/oapp/libs/Opti
 import { IVRFCoordinatorV2Plus } from "lib/chainlink-brownie-contracts/contracts/src/v0.8/vrf/dev/interfaces/IVRFCoordinatorV2Plus.sol";
 import { VRFV2PlusClient } from "lib/chainlink-brownie-contracts/contracts/src/v0.8/vrf/dev/libraries/VRFV2PlusClient.sol";
 
+// Interface for local callbacks
+interface IVRFCallbackReceiver {
+    function receiveRandomWords(uint256 requestId, uint256[] memory randomWords) external;
+}
+
 contract OmniDragonVRFConsumerV2_5 is OApp, OAppOptionsType3 {
     using OptionsBuilder for bytes;
 
     IVRFCoordinatorV2Plus public immutable vrfCoordinator;
+    
+    // LayerZero Chain EIDs
     uint32 public constant ETHEREUM_EID = 30101;
     uint32 public constant BSC_EID = 30102;
     uint32 public constant AVALANCHE_EID = 30106;
@@ -30,6 +42,9 @@ contract OmniDragonVRFConsumerV2_5 is OApp, OAppOptionsType3 {
     uint32 public constant OPTIMISM_EID = 30111;
     uint32 public constant BASE_EID = 30184;
     uint32 public constant SONIC_EID = 30332;
+    
+    // Local Arbitrum EID (for internal tracking)
+    uint32 public constant LOCAL_ARBITRUM_EID = 0;
     
     mapping(uint32 => bool) public supportedChains;
     mapping(uint32 => uint32) public chainGasLimits;
@@ -45,20 +60,29 @@ contract OmniDragonVRFConsumerV2_5 is OApp, OAppOptionsType3 {
     
     bool public nativePayment = false;
 
+    // Enhanced VRF Request structure to support both cross-chain and local requests
     struct VRFRequest {
-        uint64 sequence;
-        uint32 sourceChainEid;
-        bytes32 sourcePeer;
+        uint64 sequence;              // For cross-chain requests
+        uint32 sourceChainEid;        // 0 for local requests, chain EID for cross-chain
+        bytes32 sourcePeer;           // LayerZero peer for cross-chain
+        address localRequester;       // Local requester address for direct requests
+        bool isLocalRequest;          // True for local requests, false for cross-chain
         uint256 randomWord;
         bool fulfilled;
-        bool responseSent;
+        bool responseSent;            // For cross-chain only
+        bool callbackSent;            // For local requests only
         uint256 timestamp;
     }
 
     mapping(uint256 => VRFRequest) public vrfRequests;
-    mapping(uint64 => uint256) public sequenceToRequestId;
+    mapping(uint64 => uint256) public sequenceToRequestId;  // Cross-chain mapping
     
     mapping(uint64 => bool) public pendingResponses;
+    
+    // Local request tracking
+    uint256 public localRequestCounter;
+    mapping(address => uint256[]) public userLocalRequests;  // user => requestIds[]
+    mapping(address => bool) public authorizedLocalCallers;  // Authorization for local requests
     
     /**
      * @dev Minimum ETH balance threshold for monitoring purposes only.
@@ -66,6 +90,7 @@ contract OmniDragonVRFConsumerV2_5 is OApp, OAppOptionsType3 {
     uint256 public minimumBalance = 0.005 ether;
     uint32 public defaultGasLimit = 2500000;
 
+    // Enhanced events for both cross-chain and local requests
     event RandomWordsRequested(
         uint256 indexed requestId,
         uint32 indexed srcEid,
@@ -73,14 +98,26 @@ contract OmniDragonVRFConsumerV2_5 is OApp, OAppOptionsType3 {
         uint64 sequence,
         uint256 timestamp
     );
+    
+    event LocalRandomWordsRequested(
+        uint256 indexed requestId,
+        address indexed requester,
+        uint256 timestamp
+    );
+    
     event VRFRequestSent(uint256 indexed originalRequestId, uint256 indexed vrfRequestId, uint32 sourceChain);
     event RandomnessFulfilled(uint256 indexed requestId, uint256[] randomWords, uint32 targetChain);
     event ResponseSentToChain(uint64 indexed sequence, uint256 randomWord, uint32 targetChain, uint256 fee);
     event ResponsePending(uint64 indexed sequence, uint256 indexed requestId, uint32 targetChain, string reason);
+    
+    event LocalCallbackSent(uint256 indexed requestId, address indexed requester, uint256 randomWord);
+    event LocalCallbackFailed(uint256 indexed requestId, address indexed requester, string reason);
+    
     event VRFConfigUpdated(uint256 subscriptionId, bytes32 keyHash, uint32 callbackGasLimit, uint16 requestConfirmations);
     event MinimumBalanceUpdated(uint256 oldBalance, uint256 newBalance);
     event ChainSupportUpdated(uint32 chainEid, bool supported, uint32 gasLimit);
     event ContractFunded(address indexed funder, uint256 amount, uint256 newBalance);
+    event LocalCallerAuthorized(address indexed caller, bool authorized);
 
     constructor(
         address _endpoint,
@@ -97,6 +134,9 @@ contract OmniDragonVRFConsumerV2_5 is OApp, OAppOptionsType3 {
         _setSupportedChain(AVALANCHE_EID, true, 2500000);
         _setSupportedChain(BASE_EID, true, 2500000);
         _setSupportedChain(ETHEREUM_EID, true, 2500000);
+        
+        // Enable owner for local requests by default
+        authorizedLocalCallers[_owner] = true;
     }
 
     /**
@@ -110,11 +150,9 @@ contract OmniDragonVRFConsumerV2_5 is OApp, OAppOptionsType3 {
         bytes calldata
     ) internal override {
         require(supportedChains[_origin.srcEid], "Chain not supported");
-        
         require(peers[_origin.srcEid] == _origin.sender, "Invalid source peer");
         
         uint64 sequence = abi.decode(_message, (uint64));
-        
         require(sequenceToRequestId[sequence] == 0, "Duplicate sequence");
 
         bytes memory extraArgs = VRFV2PlusClient._argsToBytes(
@@ -136,9 +174,12 @@ contract OmniDragonVRFConsumerV2_5 is OApp, OAppOptionsType3 {
             sequence: sequence,
             sourceChainEid: _origin.srcEid,
             sourcePeer: _origin.sender,
+            localRequester: address(0),
+            isLocalRequest: false,
             randomWord: 0,
             fulfilled: false,
             responseSent: false,
+            callbackSent: false,
             timestamp: block.timestamp
         });
         
@@ -146,6 +187,51 @@ contract OmniDragonVRFConsumerV2_5 is OApp, OAppOptionsType3 {
 
         emit VRFRequestSent(sequence, requestId, _origin.srcEid);
         emit RandomWordsRequested(requestId, _origin.srcEid, _origin.sender, sequence, block.timestamp);
+    }
+
+    /**
+     * @notice Request random words directly on Arbitrum (local request)
+     * @dev For contracts/users on Arbitrum that want randomness without cross-chain messaging
+     * @return requestId The VRF request ID
+     */
+    function requestRandomWordsLocal() external returns (uint256 requestId) {
+        require(authorizedLocalCallers[msg.sender], "Not authorized for local requests");
+        
+        bytes memory extraArgs = VRFV2PlusClient._argsToBytes(
+            VRFV2PlusClient.ExtraArgsV1({nativePayment: nativePayment})
+        );
+        
+        requestId = vrfCoordinator.requestRandomWords(
+            VRFV2PlusClient.RandomWordsRequest({
+                keyHash: keyHash,
+                subId: subscriptionId,
+                requestConfirmations: requestConfirmations,
+                callbackGasLimit: callbackGasLimit,
+                numWords: numWords,
+                extraArgs: extraArgs
+            })
+        );
+        
+        localRequestCounter++;
+        
+        vrfRequests[requestId] = VRFRequest({
+            sequence: 0,  // Not used for local requests
+            sourceChainEid: LOCAL_ARBITRUM_EID,
+            sourcePeer: bytes32(0),
+            localRequester: msg.sender,
+            isLocalRequest: true,
+            randomWord: 0,
+            fulfilled: false,
+            responseSent: false,
+            callbackSent: false,
+            timestamp: block.timestamp
+        });
+        
+        userLocalRequests[msg.sender].push(requestId);
+        
+        emit LocalRandomWordsRequested(requestId, msg.sender, block.timestamp);
+        
+        return requestId;
     }
 
     /**
@@ -158,12 +244,47 @@ contract OmniDragonVRFConsumerV2_5 is OApp, OAppOptionsType3 {
         require(msg.sender == address(vrfCoordinator), "Only VRF Coordinator can fulfill");
 
         VRFRequest storage request = vrfRequests[requestId];
-        require(request.sequence != 0, "Invalid request ID");
+        require(request.timestamp != 0, "Invalid request ID");
         require(!request.fulfilled, "Already fulfilled");
 
         request.fulfilled = true;
         request.randomWord = randomWords[0];
 
+        if (request.isLocalRequest) {
+            // Handle local request callback
+            _handleLocalCallback(requestId, request, randomWords);
+        } else {
+            // Handle cross-chain response
+            _handleCrossChainResponse(requestId, request, randomWords);
+        }
+
+        emit RandomnessFulfilled(requestId, randomWords, request.sourceChainEid);
+    }
+
+    /**
+     * @dev Handle callback for local requests
+     */
+    function _handleLocalCallback(uint256 requestId, VRFRequest storage request, uint256[] calldata randomWords) internal {
+        address requester = request.localRequester;
+        
+        // Try to call receiveRandomWords if the requester is a contract
+        if (requester.code.length > 0) {
+            try IVRFCallbackReceiver(requester).receiveRandomWords(requestId, randomWords) {
+                request.callbackSent = true;
+                emit LocalCallbackSent(requestId, requester, request.randomWord);
+            } catch Error(string memory reason) {
+                emit LocalCallbackFailed(requestId, requester, reason);
+            } catch {
+                emit LocalCallbackFailed(requestId, requester, "Unknown callback error");
+            }
+        }
+        // For EOA requests, they can query the result using getLocalRequest()
+    }
+
+    /**
+     * @dev Handle response for cross-chain requests
+     */
+    function _handleCrossChainResponse(uint256 requestId, VRFRequest storage request, uint256[] calldata /* randomWords */) internal {
         uint32 targetGasLimit = chainGasLimits[request.sourceChainEid];
         if (targetGasLimit == 0) {
             targetGasLimit = defaultGasLimit;
@@ -180,8 +301,64 @@ contract OmniDragonVRFConsumerV2_5 is OApp, OAppOptionsType3 {
         }
 
         _sendResponseToChain(request, fee);
+    }
 
-        emit RandomnessFulfilled(requestId, randomWords, request.sourceChainEid);
+    /**
+     * @notice Authorize/deauthorize local callers (owner only)
+     * @param caller The address to authorize/deauthorize
+     * @param authorized Whether to authorize or deauthorize
+     */
+    function setLocalCallerAuthorization(address caller, bool authorized) external onlyOwner {
+        authorizedLocalCallers[caller] = authorized;
+        emit LocalCallerAuthorized(caller, authorized);
+    }
+
+    /**
+     * @notice Get local request details
+     * @param requestId The VRF request ID
+     * @return requester The address that made the request
+     * @return fulfilled Whether the request has been fulfilled
+     * @return callbackSent Whether callback was successfully sent
+     * @return randomWord The random word (0 if not fulfilled)
+     * @return timestamp When the request was made
+     */
+    function getLocalRequest(uint256 requestId) external view returns (
+        address requester,
+        bool fulfilled,
+        bool callbackSent,
+        uint256 randomWord,
+        uint256 timestamp
+    ) {
+        VRFRequest storage request = vrfRequests[requestId];
+        require(request.isLocalRequest, "Not a local request");
+        
+        return (
+            request.localRequester,
+            request.fulfilled,
+            request.callbackSent,
+            request.randomWord,
+            request.timestamp
+        );
+    }
+
+    /**
+     * @notice Get all local requests for a user
+     * @param user The user address
+     * @return requestIds Array of request IDs for the user
+     */
+    function getUserLocalRequests(address user) external view returns (uint256[] memory requestIds) {
+        return userLocalRequests[user];
+    }
+
+    /**
+     * @notice Get local request statistics
+     * @return totalLocalRequests Total number of local requests
+     * @return totalCrossChainRequests Total number of cross-chain requests (approximate)
+     */
+    function getRequestStats() external view returns (uint256 totalLocalRequests, uint256 totalCrossChainRequests) {
+        totalLocalRequests = localRequestCounter;
+        // Cross-chain requests don't have a simple counter, this is an approximation
+        totalCrossChainRequests = 0; // Would need to track this separately if needed
     }
 
     /**

@@ -27,12 +27,11 @@ library DragonVRFLib {
     /**
      * @notice Deploys a VRFConsumer contract behind a TransparentUpgradeableProxy
      * @param params The deployment parameters
-     * @param owner The owner of the deployed contract
      * @return proxy The address of the deployed proxy contract
      */
     function deployVRFConsumer(
         VRFParams memory params,
-        address owner
+        address /* owner */
     ) internal returns (address proxy) {
         require(params.implementation != address(0), "No implementation");
         require(params.proxyAdmin != address(0), "No proxy admin");

@@ -209,7 +209,7 @@ library EnhancedDragonMarketAnalyzer {
 
     function _calculateOptimalJackpotFee(
         uint256 jackpotSize,
-        uint256 dailyVolume,
+        uint256 /* dailyVolume */,
         uint256 marketScore,
         uint256 availableForAllocation
     ) internal pure returns (uint256) {
@@ -256,8 +256,7 @@ library EnhancedDragonMarketAnalyzer {
         uint256 jackpotSize,
         uint256 daysSinceLastJackpot
     ) public pure returns (uint256 score) {
-        // Base score starts at 5000 (50%)
-        uint256 baseScore = 5000;
+        // Base score starts at 5000 (50%) - removed unused variable
         
         // Liquidity component (0-2500 points, 25% weight)
         uint256 liquidityScore = _calculateLiquidityScore(totalLiquidity);
@@ -383,7 +382,7 @@ library EnhancedDragonMarketAnalyzer {
         uint256 totalLiquidity,
         uint256 dailyVolume,
         int256[] memory priceData,
-        uint256[] memory oracleWeights,
+        uint256[] memory /* oracleWeights */,
         uint256 activeStakers,
         uint256 jackpotSize,
         uint256 daysSinceLastJackpot
@@ -422,7 +421,7 @@ library EnhancedDragonMarketAnalyzer {
 
     function calculateCompleteOracleAnalysis(
         int256[] memory priceData,
-        uint256[] memory oracleWeights,
+        uint256[] memory /* oracleWeights */,
         uint256 freshness
     ) public pure returns (OracleAnalysis memory analysis) {
         uint256 numOracles = priceData.length;

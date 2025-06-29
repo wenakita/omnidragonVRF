@@ -23,15 +23,13 @@ library DragonDeployerLib {
 
     /**
      * @notice Deploys a SwapTrigger contract behind a TransparentUpgradeableProxy
-     * @param omniDragon The address of the OmniDragon token
      * @param params The deployment parameters
-     * @param owner The owner of the deployed contract
      * @return proxy The address of the deployed proxy contract
      */
     function deploySwapTrigger(
-        address omniDragon,
+        address /* omniDragon */,
         SwapParams memory params,
-        address owner
+        address /* owner */
     ) internal returns (address proxy) {
         require(params.implementation != address(0), "No implementation");
         require(params.proxyAdmin != address(0), "No proxy admin");

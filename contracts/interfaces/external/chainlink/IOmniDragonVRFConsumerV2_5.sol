@@ -8,21 +8,79 @@ import { MessagingFee } from "@layerzerolabs/oapp-evm/contracts/oapp/OAppSender.
  * @title IOmniDragonVRFConsumerV2_5
  * @dev Interface for OmniDragon VRF Consumer V2.5 - Chainlink VRF 2.5 integration contract
  * 
- * This contract resides on a destination chain (e.g., Arbitrum), receives VRF requests from a source chain via LayerZero,
- * gets randomness from Chainlink VRF 2.5, and sends responses back to the source chain.
+ * This contract resides on a destination chain (e.g., Arbitrum), receives VRF requests from source chains via LayerZero,
+ * AND handles direct local requests from the same chain.
+ * Gets randomness from Chainlink VRF 2.5, and sends responses back to source chains or calls local callbacks.
  */
 interface IOmniDragonVRFConsumerV2_5 {
     
-    // Events
+    // Events for cross-chain requests
     event RandomWordsRequested(uint256 indexed requestId, uint32 indexed srcEid, bytes32 indexed requester, uint256 timestamp);
     event VRFRequestSent(uint64 indexed sequence, uint256 indexed vrfRequestId);
     event RandomnessFulfilled(uint256 indexed requestId, uint256[] randomWords);
     event ResponseSentToSonic(uint64 indexed sequence, uint256 randomWord, uint256 fee);
     event ResponsePending(uint64 indexed sequence, uint256 indexed requestId, string reason);
+    
+    // Events for local requests
+    event LocalRandomWordsRequested(uint256 indexed requestId, address indexed requester, uint256 timestamp);
+    event LocalCallbackSent(uint256 indexed requestId, address indexed requester, uint256 randomWord);
+    event LocalCallbackFailed(uint256 indexed requestId, address indexed requester, string reason);
+    event LocalCallerAuthorized(address indexed caller, bool authorized);
+    
+    // Configuration events
     event VRFConfigUpdated(uint256 subscriptionId, bytes32 keyHash, uint32 callbackGasLimit, uint16 requestConfirmations);
     event MinimumBalanceUpdated(uint256 oldBalance, uint256 newBalance);
     event SonicGasLimitUpdated(uint32 oldLimit, uint32 newLimit);
     event ContractFunded(address indexed funder, uint256 amount, uint256 newBalance);
+
+    /* ========== LOCAL REQUEST FUNCTIONS ========== */
+
+    /**
+     * @notice Request random words directly on Arbitrum (local request)
+     * @dev For contracts/users on Arbitrum that want randomness without cross-chain messaging
+     * @return requestId The VRF request ID
+     */
+    function requestRandomWordsLocal() external returns (uint256 requestId);
+
+    /**
+     * @notice Authorize/deauthorize local callers (owner only)
+     * @param caller The address to authorize/deauthorize
+     * @param authorized Whether to authorize or deauthorize
+     */
+    function setLocalCallerAuthorization(address caller, bool authorized) external;
+
+    /**
+     * @notice Get local request details
+     * @param requestId The VRF request ID
+     * @return requester The address that made the request
+     * @return fulfilled Whether the request has been fulfilled
+     * @return callbackSent Whether callback was successfully sent
+     * @return randomWord The random word (0 if not fulfilled)
+     * @return timestamp When the request was made
+     */
+    function getLocalRequest(uint256 requestId) external view returns (
+        address requester,
+        bool fulfilled,
+        bool callbackSent,
+        uint256 randomWord,
+        uint256 timestamp
+    );
+
+    /**
+     * @notice Get all local requests for a user
+     * @param user The user address
+     * @return requestIds Array of request IDs for the user
+     */
+    function getUserLocalRequests(address user) external view returns (uint256[] memory requestIds);
+
+    /**
+     * @notice Get local request statistics
+     * @return totalLocalRequests Total number of local requests
+     * @return totalCrossChainRequests Total number of cross-chain requests (approximate)
+     */
+    function getRequestStats() external view returns (uint256 totalLocalRequests, uint256 totalCrossChainRequests);
+
+    /* ========== CROSS-CHAIN REQUEST FUNCTIONS ========== */
 
     /**
      * @notice Retry sending a pending response
@@ -84,7 +142,7 @@ interface IOmniDragonVRFConsumerV2_5 {
     );
 
     /**
-     * @dev Get request details by sequence
+     * @dev Get request details by sequence (cross-chain)
      */
     function getRequestBySequence(uint64 sequence) external view returns (
         uint256 requestId,
@@ -96,7 +154,7 @@ interface IOmniDragonVRFConsumerV2_5 {
     );
 
     /**
-     * @dev Get request details by VRF request ID
+     * @dev Get request details by VRF request ID (cross-chain)
      */
     function getRequestById(uint256 requestId) external view returns (
         uint64 sequence,
@@ -129,6 +187,10 @@ interface IOmniDragonVRFConsumerV2_5 {
     function sonicGasLimit() external view returns (uint32);
     function sequenceToRequestId(uint64 sequence) external view returns (uint256);
     function pendingResponses(uint64 sequence) external view returns (bool);
+    
+    // Local request state variables
+    function localRequestCounter() external view returns (uint256);
+    function authorizedLocalCallers(address caller) external view returns (bool);
 
     /* ========== ADMIN FUNCTIONS ========== */
 

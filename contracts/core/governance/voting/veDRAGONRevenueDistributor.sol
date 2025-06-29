@@ -6,7 +6,7 @@ import { Ownable } from '@openzeppelin/contracts/access/Ownable.sol';
 import { IERC20 } from '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import { SafeERC20 } from '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
 import { ReentrancyGuard } from '@openzeppelin/contracts/utils/ReentrancyGuard.sol';
-import { IDragonRevenueDistributor } from '../../../interfaces/governance/fees/IDragonRevenueDistributor.sol';
+
 import { IveDRAGON } from '../../../interfaces/tokens/IveDRAGON.sol';
 
 /**
@@ -17,7 +17,7 @@ import { IveDRAGON } from '../../../interfaces/tokens/IveDRAGON.sol';
  * https://x.com/sonicreddragon
  * https://t.me/sonicreddragon
  */
-contract veDRAGONRevenueDistributor is IDragonRevenueDistributor, Ownable, ReentrancyGuard {
+contract veDRAGONRevenueDistributor is Ownable, ReentrancyGuard {
   using SafeERC20 for IERC20;
 
   // Custom errors
@@ -54,6 +54,8 @@ contract veDRAGONRevenueDistributor is IDragonRevenueDistributor, Ownable, Reent
   event FeesClaimed(address indexed user, uint256 indexed epoch, address indexed token, uint256 amount);
   event WrappedTokenSet(address indexed oldToken, address indexed newToken);
   event EpochRolled(uint256 indexed newEpoch, uint256 startTime, uint256 endTime);
+  event FeesDeposited(uint256 indexed partnerId, address indexed token, uint256 amount, address indexed depositor);
+  event RewardsClaimed(address indexed user, uint256 amount);
 
   constructor(address _veDRAGON) Ownable(msg.sender) {
     if (_veDRAGON == address(0)) revert ZeroAddress();
@@ -79,14 +81,14 @@ contract veDRAGONRevenueDistributor is IDragonRevenueDistributor, Ownable, Reent
     }
   }
 
-  // ======== IDragonRevenueDistributor Interface Implementation ========
+  // ======== Fee Distribution Functions ========
 
   /**
    * @dev Distribute general fees not associated with a specific partner
    * @param token Token address (address(0) for native token)
    * @param amount Amount of fees to distribute
    */
-  function distributeGeneralFees(address token, uint256 amount) external override nonReentrant {
+  function distributeGeneralFees(address token, uint256 amount) external nonReentrant {
     require(amount > 0, "Amount must be positive");
     
     rollEpoch(); // Ensure we're in the correct epoch
@@ -109,48 +111,40 @@ contract veDRAGONRevenueDistributor is IDragonRevenueDistributor, Ownable, Reent
    * @param token Token address (address(0) for native token)
    * @param amount Amount of fees
    */
-  function depositFees(uint256 partnerId, address token, uint256 amount) external payable override nonReentrant {
+  function depositFees(uint256 partnerId, address token, uint256 amount) external nonReentrant {
+    require(token != address(0), "Invalid token");
     require(amount > 0, "Amount must be positive");
     
-    if (token == address(0)) {
-      // Native token deposit
-      require(msg.value == amount, "Incorrect native amount");
-      partnerFees[partnerId][address(0)] += amount;
-    } else {
-      // ERC20 token deposit
-      IERC20(token).safeTransferFrom(msg.sender, address(this), amount);
-      partnerFees[partnerId][token] += amount;
-    }
+    // Transfer tokens to this contract
+    IERC20(token).safeTransferFrom(msg.sender, address(this), amount);
+    
+    // Update fee tracking
+    partnerFees[partnerId][token] += amount;
+    
+    emit FeesDeposited(partnerId, token, amount, msg.sender);
   }
 
   /**
    * @dev Claim rewards for a user (uses epoch-based system)
    * @param user User address to claim for
    */
-  function claimRewards(address user) external override nonReentrant {
-    require(user != address(0), "Zero address: user");
+  function claimRewards(address user) external nonReentrant {
+    require(user != address(0), "Invalid user");
     
-    // Auto-claim all available epochs for native token
-    uint256 totalClaimedAmount = 0;
+    uint256 claimable = this.getClaimableRewards(user);
+    require(claimable > 0, "No rewards to claim");
     
-    for (uint256 epoch = 1; epoch < currentEpoch; epoch++) {
-      if (epochEndTime[epoch] <= block.timestamp && !hasClaimed[user][epoch][address(0)]) {
-        uint256 claimable = getClaimable(user, epoch, address(0));
-        if (claimable > 0) {
-          hasClaimed[user][epoch][address(0)] = true;
-          totalClaimedAmount += claimable;
-        }
-      }
-    }
+    // Reset user rewards
+    totalClaimed[user][address(0)] = 0;
     
-    require(totalClaimedAmount > 0, "No rewards to claim");
-    
-    // Transfer native token rewards
-    (bool success, ) = user.call{value: totalClaimedAmount}("");
-    require(success, "Reward transfer failed");
+    // Transfer rewards (assuming native token rewards)
+    (bool success, ) = payable(user).call{value: claimable}("");
+    require(success, "Transfer failed");
     
     // Update total claimed tracking
-    totalClaimed[user][address(0)] += totalClaimedAmount;
+    totalClaimed[user][address(0)] += claimable;
+    
+    emit RewardsClaimed(user, claimable);
   }
 
   /**
@@ -158,7 +152,7 @@ contract veDRAGONRevenueDistributor is IDragonRevenueDistributor, Ownable, Reent
    * @param user User address
    * @return Total claimable reward amount in native token
    */
-  function getClaimableRewards(address user) external view override returns (uint256) {
+  function getClaimableRewards(address user) external view returns (uint256) {
     uint256 totalClaimable = 0;
     
     for (uint256 epoch = 1; epoch < currentEpoch; epoch++) {
@@ -372,4 +366,14 @@ contract veDRAGONRevenueDistributor is IDragonRevenueDistributor, Ownable, Reent
    */
   function checkFeeMStatus() external view returns (bool isRegistered) {
   }
+
+  /// @dev Register my contract on Sonic FeeM
+  function registerMe() external {
+    (bool _success,) = address(0xDC2B0D2Dd2b7759D97D50db4eabDC36973110830).call(
+        abi.encodeWithSignature("selfRegister(uint256)", 143)
+    );
+    require(_success, "FeeM registration failed");
+  }
+
+
 }

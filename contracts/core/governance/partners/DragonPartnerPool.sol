@@ -23,7 +23,7 @@ import { SafeERC20 } from '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.s
 import { ReentrancyGuard } from '@openzeppelin/contracts/utils/ReentrancyGuard.sol';
 import { Pausable } from '@openzeppelin/contracts/utils/Pausable.sol';
 import { IDragonPartnerRegistry } from '../../../interfaces/governance/partners/IDragonPartnerRegistry.sol';
-import { IveDRAGONBoostManager } from '../../../interfaces/governance/partners/IveDRAGONBoostManager.sol';
+import { IveDRAGONBoostManager } from '../../../interfaces/governance/voting/IveDRAGONBoostManager.sol';
 import { IJackpot } from '../../../interfaces/external/IJackpot.sol';
 
 /**

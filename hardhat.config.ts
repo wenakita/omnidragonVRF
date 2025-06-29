@@ -3,8 +3,18 @@ import 'hardhat-deploy'
 import '@nomiclabs/hardhat-ethers'
 import '@layerzerolabs/toolbox-hardhat'
 import '@nomicfoundation/hardhat-verify'
-import './tasks/deploy-dragon.js'
-import './tasks/deploy-ecosystem.js'
+// Task imports temporarily disabled to fix HH9 error
+// import './tasks/configure-arbitrum-reverse-peer.js'
+// import './tasks/verify-cross-chain-vrf.js'
+// import './tasks/list-all-addresses.js'
+// import './tasks/configure-avalanche-ecosystem.js'
+// import './tasks/test-ecosystem-functionality.js'
+// import './tasks/deploy-omnidragon-documented.js'
+// import './tasks/deploy-omnidragon-universal-addresses.js'
+// import './tasks/configure-omnidragon-delegates.js'
+// import './tasks/set-omnidragon-peers-manual.js'
+// import './tasks/transfer-omnidragon-ownership.js'
+// import './tasks/verify-all-contracts.js'
 import { HardhatUserConfig, HttpNetworkAccountsUserConfig } from 'hardhat/types'
 import 'hardhat-preprocessor'
 import fs from 'fs'
@@ -21,11 +31,16 @@ const accounts: HttpNetworkAccountsUserConfig | undefined = MNEMONIC
       : undefined
 
 function getRemappings() {
-    return fs
-        .readFileSync('remappings.txt', 'utf8')
-        .split('\n')
-        .filter(Boolean)
-        .map((line) => line.trim().split('='))
+    try {
+        return fs
+            .readFileSync('remappings.txt', 'utf8')
+            .split('\n')
+            .filter(Boolean)
+            .map((line) => line.trim().split('='))
+    } catch (error) {
+        // Return empty array if remappings.txt doesn't exist
+        return []
+    }
 }
 
 const config: any = {
@@ -46,7 +61,7 @@ const config: any = {
                 settings: {
                     optimizer: {
                         enabled: true,
-                        runs: 800, // Factory-like optimization
+                        runs: 100, // Low runs for smaller contract size
                     },
                     viaIR: false, // Disable IR optimization for verification
                 },
@@ -56,7 +71,7 @@ const config: any = {
                 settings: {
                     optimizer: {
                         enabled: true,
-                        runs: 200, // Standard optimizer runs
+                        runs: 100, // Low runs for smaller contract size
                     },
                     viaIR: false, // Disable IR optimization for verification
                 },
@@ -66,6 +81,7 @@ const config: any = {
                 settings: {
                     optimizer: {
                         enabled: true,
+                        runs: 100, // Low runs for smaller contract size
                     },
                     viaIR: true, // Enable IR optimization for better code generation
                 },
@@ -73,7 +89,7 @@ const config: any = {
         ],
     },
     preprocess: {
-        eachLine: (hre) => ({
+        eachLine: (hre: any) => ({
             transform: (line: string) => {
                 if (line.match(/^\s*import /i)) {
                     for (const [from, to] of getRemappings()) {
@@ -90,15 +106,16 @@ const config: any = {
     networks: {
         sonic: {
             eid: 30332, // Sonic EID - using numeric value since SONIC_V2_MAINNET might not be defined
-            url: process.env.RPC_URL_SONIC || 'https://rpc.soniclabs.com', // Using a public RPC
+            url: process.env.RPC_URL_SONIC || 'https://eu.endpoints.matrixed.link/rpc/sonic?auth=p886of4gitu82',
             accounts,
             chainId: 146,
-            gas: 50000000,
-            gasPrice: 100000000000,
+            gas: 20000000,  // Increased to 20M - Sonic supports up to 1B gas per block
+            gasPrice: 55000000000,  // 55 GWei as per Sonic documentation (base fee + 10% buffer)
+            allowUnlimitedContractSize: true,
         } as any,
         arbitrum: {
             eid: EndpointId.ARBITRUM_V2_MAINNET,
-            url: process.env.RPC_URL_ARBITRUM || 'https://arbitrum.drpc.org', // Using a public RPC
+            url: process.env.RPC_URL_ARBITRUM || 'https://eu.endpoints.matrixed.link/rpc/arbitrum?auth=p886of4gitu82',
             accounts,
             chainId: 42161,
             gas: 35000000,
@@ -107,7 +124,7 @@ const config: any = {
         } as any,
         base: {
             eid: EndpointId.BASE_V2_MAINNET,
-            url: process.env.RPC_URL_BASE || 'https://mainnet.base.org', // Standard public RPC
+            url: process.env.RPC_URL_BASE || 'https://eu.endpoints.matrixed.link/rpc/base?auth=p886of4gitu82',
             accounts,
             chainId: 8453,
             gas: 35000000,
@@ -116,7 +133,7 @@ const config: any = {
         } as any,
         ethereum: {
             eid: EndpointId.ETHEREUM_V2_MAINNET,
-            url: process.env.RPC_URL_ETHEREUM || 'https://ethereum.drpc.org', // Using a public RPC
+            url: process.env.RPC_URL_ETHEREUM || 'https://eu.endpoints.matrixed.link/rpc/ethereum?auth=p886of4gitu82',
             accounts,
             chainId: 1,
             gas: 30000000,
@@ -125,8 +142,8 @@ const config: any = {
         } as any,
         avalanche: {
             eid: EndpointId.AVALANCHE_V2_MAINNET,
-            url: process.env.RPC_URL_AVALANCHE || 'https://api.avax.network/ext/bc/C/rpc', // Standard public RPC
-            accounts: process.env.CREATE2_PRIVATE_KEY ? [process.env.CREATE2_PRIVATE_KEY] : accounts,
+            url: process.env.RPC_URL_AVALANCHE || 'https://eu.endpoints.matrixed.link/rpc/avax?auth=p886of4gitu82',
+            accounts,  // Use same accounts as other networks for consistent CREATE2 addresses
             chainId: 43114,
             gas: 15000000,
             gasPrice: 25000000000,
@@ -134,11 +151,29 @@ const config: any = {
         } as any,
         bsc: {
             eid: EndpointId.BSC_V2_MAINNET, // Assuming this is the correct EndpointId for BSC Mainnet V2
-            url: process.env.RPC_URL_BSC || 'https://bsc-dataseed.bnbchain.org', // Using a public RPC
+            url: process.env.RPC_URL_BSC || 'https://eu.endpoints.matrixed.link/rpc/bsc?auth=p886of4gitu82',
             accounts,
             chainId: 56, // Standard BSC Mainnet Chain ID
             gas: 30000000,
             gasPrice: 5000000000, // 5 gwei
+            allowUnlimitedContractSize: true,
+        } as any,
+        polygon: {
+            eid: EndpointId.POLYGON_V2_MAINNET,
+            url: process.env.RPC_URL_POLYGON || 'https://eu.endpoints.matrixed.link/rpc/polygon?auth=p886of4gitu82',
+            accounts,
+            chainId: 137,
+            gas: 30000000,
+            gasPrice: 30000000000, // 30 gwei
+            allowUnlimitedContractSize: true,
+        } as any,
+        optimism: {
+            eid: EndpointId.OPTIMISM_V2_MAINNET,
+            url: process.env.RPC_URL_OPTIMISM || 'https://eu.endpoints.matrixed.link/rpc/optimism?auth=p886of4gitu82',
+            accounts,
+            chainId: 10,
+            gas: 30000000,
+            gasPrice: 1000000000, // 1 gwei
             allowUnlimitedContractSize: true,
         } as any,
         hardhat: {
@@ -154,7 +189,7 @@ const config: any = {
         apiKey: {
             sonic: process.env.SONICSCAN_API_KEY || 'YW21H25FAP339T8GK8HBXYA87BZETH9DCU',
             avalanche: process.env.SNOWTRACE_API_KEY || 'YW21H25FAP339T8GK8HBXYA87BZETH9DCU',
-            arbitrumOne: process.env.ARBISCAN_API_KEY || 'YW21H25FAP339T8GK8HBXYA87BZETH9DCU',
+            arbitrumOne: process.env.ARBISCAN_API_KEY || 'RAUMV4R1QETFWBPNS9SDQCS5QJD1WZ1YUD',
         },
         customChains: [
             {

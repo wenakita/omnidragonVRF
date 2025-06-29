@@ -1,0 +1,13 @@
+{
+  "network": "Avalanche Mainnet",
+  "networkKey": "avalanche",
+  "chainId": 43114,
+  "eid": 30106,
+  "endpoint": "0x567eB27f7EA8c69988e30B045987Ad58A597685C",
+  "omniDragonAddress": "0x14D44493F6777c2f6accbDDd6936d33437c5e337",
+  "owner": "0xDDd0050d1E084dFc72d5d06447Cc10bcD3fEF60F",
+  "deployer": "0xDDd0050d1E084dFc72d5d06447Cc10bcD3fEF60F",
+  "deployedAt": "2025-06-29T03:10:26.639Z",
+  "transactionHash": "0x409f2683b8e9859f7f0a5d6df264191b48c174b78e61391518207e468e4c7722",
+  "blockNumber": 64644668
+}

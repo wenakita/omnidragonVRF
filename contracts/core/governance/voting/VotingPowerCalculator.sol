@@ -10,7 +10,7 @@
 pragma solidity ^0.8.19;
 
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
-import {veDRAGONMath} from "@omnidragon/libraries/math/veDRAGONMath.sol";
+import {veDRAGONMath} from "../../../libraries/math/veDRAGONMath.sol";
 
 /**
  * @title VotingPowerCalculator

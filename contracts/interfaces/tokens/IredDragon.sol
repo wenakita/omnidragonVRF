@@ -5,7 +5,7 @@ import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 
 /**
  * @title IredDragon
- * @notice Interface for the redDragon wrapped Shadow LP token
+ * @notice Interface for the redDragon wrapped LP token
  */
 interface IredDragon is IERC20 {
   // Structs
@@ -18,7 +18,7 @@ interface IredDragon is IERC20 {
   }
 
   // View functions
-  function shadowLP() external view returns (IERC20);
+  function getLP() external view returns (IERC20);
   function totalStaked() external view returns (uint256);
   function rewardRate() external view returns (uint256);
   function stakes(address account) external view returns (StakeInfo memory);
