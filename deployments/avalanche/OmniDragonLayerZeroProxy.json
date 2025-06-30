@@ -1,0 +1,11 @@
+{
+  "network": "avalanche",
+  "chainId": 43114,
+  "contractAddress": "0x8426c64944e3eaF9B56AA20F5f72752EF5A51C88",
+  "initialEndpoint": "0x1a44076050125825900e736c501f859c50fE728c",
+  "owner": "0xDDd0050d1E084dFc72d5d06447Cc10bcD3fEF60F",
+  "emergencyPauser": "0xDDd0050d1E084dFc72d5d06447Cc10bcD3fEF60F",
+  "deploymentBlock": null,
+  "deploymentTx": "0x9527c1e58e96a5749fbac2d882d35dc14cd0a1d13bbf4a3aea5f76da3d19fd5d",
+  "timestamp": "2025-06-29T07:33:40.005Z"
+}

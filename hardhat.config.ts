@@ -15,6 +15,30 @@ import '@nomicfoundation/hardhat-verify'
 // import './tasks/set-omnidragon-peers-manual.js'
 // import './tasks/transfer-omnidragon-ownership.js'
 // import './tasks/verify-all-contracts.js'
+import './tasks/deploy-omnidragon-deployer.js'
+import './tasks/deploy-omnidragon-deployer-universal.js'
+import './tasks/predict-universal-deployer-address.js'
+import './tasks/predict-universal-omnidragon-address.js'
+import './tasks/deploy-omnidragon-universal.js'
+import './tasks/deployment-status.js'
+import './tasks/verify-universal-contracts.js'
+import './tasks/verify-chain-registry.js'
+import './tasks/manual-verify-chain-registry.js'
+import './tasks/deploy-new-chain-registry.js'
+import './tasks/deploy-chain-registry-via-deployer.js'
+import './tasks/deploy-chain-registry-simple.js'
+import './tasks/deploy-chain-registry-standard.js'
+import './tasks/configure-chain-registry.js'
+import './tasks/update-deployer-registry.js'
+import './tasks/register-contract-type.js'
+import './tasks/deploy-layerzero-proxy.js'
+import './tasks/manage-layerzero-proxy.js'
+import './tasks/deploy-omnidragon-with-proxy-endpoints.js'
+import './tasks/deploy-price-oracles.js'
+import './tasks/configure-price-oracles.js'
+import './tasks/deploy-oracle-ecosystem.js'
+import './tasks/integrate-oracle-ecosystem.js'
+import './tasks/test-jackpot-interface.js'
 import { HardhatUserConfig, HttpNetworkAccountsUserConfig } from 'hardhat/types'
 import 'hardhat-preprocessor'
 import fs from 'fs'
@@ -106,7 +130,7 @@ const config: any = {
     networks: {
         sonic: {
             eid: 30332, // Sonic EID - using numeric value since SONIC_V2_MAINNET might not be defined
-            url: process.env.RPC_URL_SONIC || 'https://eu.endpoints.matrixed.link/rpc/sonic?auth=p886of4gitu82',
+            url: process.env.RPC_URL_SONIC || 'https://eu.endpoints.matrixed.link/rpc/sonic/?auth=p886of4gitu82',
             accounts,
             chainId: 146,
             gas: 20000000,  // Increased to 20M - Sonic supports up to 1B gas per block
@@ -118,7 +142,7 @@ const config: any = {
             url: process.env.RPC_URL_ARBITRUM || 'https://eu.endpoints.matrixed.link/rpc/arbitrum?auth=p886of4gitu82',
             accounts,
             chainId: 42161,
-            gas: 35000000,
+            gas: 10000000,  // Reduced from 35M to 10M to fit within available ETH
             gasPrice: 3000000000,
             allowUnlimitedContractSize: true,
         } as any,
@@ -187,8 +211,8 @@ const config: any = {
     },
     etherscan: {
         apiKey: {
-            sonic: process.env.SONICSCAN_API_KEY || 'YW21H25FAP339T8GK8HBXYA87BZETH9DCU',
-            avalanche: process.env.SNOWTRACE_API_KEY || 'YW21H25FAP339T8GK8HBXYA87BZETH9DCU',
+            sonic: 'YW21H25FAP339T8GK8HBXYA87BZETH9DCU',
+            avalanche: process.env.SNOWSCAN_API_KEY || 'VMXZ3HPWJP3UE1FTB5UQ51PFS5TEAI9MUE',
             arbitrumOne: process.env.ARBISCAN_API_KEY || 'RAUMV4R1QETFWBPNS9SDQCS5QJD1WZ1YUD',
         },
         customChains: [
@@ -212,5 +236,23 @@ const config: any = {
         ],
     },
 }
+
+// Import custom tasks
+require('./tasks/deploy-layerzero-proxy')
+require('./tasks/manage-layerzero-proxy')
+require('./tasks/deploy-jackpot-vault')
+require('./tasks/deploy-jackpot-distributor')
+require('./tasks/deploy-jackpot-contracts-multi')
+require('./tasks/deploy-jackpot-simple')
+require('./tasks/integrate-oracle-ecosystem')
+require('./tasks/test-jackpot-interface')
+require('./tasks/configure-omnidragon-sonic')
+require('./tasks/fix-fee-configuration')
+require('./tasks/deploy-lottery-manager')
+require('./tasks/configure-lottery-manager')
+require('./tasks/configure-uniswap-pair')
+require('./tasks/update-jackpot-reward')
+require('./tasks/fund-lottery-manager')
+require('./tasks/authorize-omnidragon')
 
 export default config

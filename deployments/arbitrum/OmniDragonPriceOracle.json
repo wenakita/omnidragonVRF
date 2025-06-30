@@ -1,0 +1,33 @@
+{
+  "network": "arbitrum",
+  "chainId": 42161,
+  "address": "0x705052Bd1f1f516cCA0e1d29Af684e10198eF3af",
+  "libraryAddress": "0x3569422Aa82C6eA0FC6f31C97E297dCC7693600e",
+  "deployer": "0xDDd0050d1E084dFc72d5d06447Cc10bcD3fEF60F",
+  "blockNumber": 352385086,
+  "transactionHash": "0xeeb5493c8909787e7e3adc388efaa8bc222258dc97a9a495fa2c2d1c515bd9b8",
+  "gasUsed": "4122773",
+  "timestamp": "2025-06-29T09:08:00.240Z",
+  "configuration": {
+    "nativeSymbol": "ETH",
+    "quoteSymbol": "USD",
+    "layerzeroEndpoint": "0x1a44076050125825900e736c501f859c50fE728c",
+    "oracles": {
+      "chainlinkSUSD": "0x639Fe6ab55C921f74e7fac1ee960C0B6293ba612",
+      "bandProtocol": "0x0000000000000000000000000000000000000000",
+      "api3Proxy": "0x0000000000000000000000000000000000000000",
+      "pythNetwork": "0x0000000000000000000000000000000000000000"
+    },
+    "totalFee": 1000,
+    "initialJackpotFee": 300
+  },
+  "libraries": {
+    "EnhancedDragonMarketAnalyzer": "0x3569422Aa82C6eA0FC6f31C97E297dCC7693600e"
+  },
+  "contractName": "OmniDragonPriceOracle",
+  "compiler": {
+    "version": "0.8.20",
+    "optimization": true,
+    "runs": 200
+  }
+}

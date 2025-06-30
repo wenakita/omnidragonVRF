@@ -1,0 +1,22 @@
+{
+  "address": "0x968763BebE98e956dA5826780e36E2f21edb79a3",
+  "args": [
+    "0x0E5d746F01f4CDc76320c3349386176a873eAa40",
+    "0xb5F29296a670F09C5380abf0840920CEE65AeDA0", 
+    "0xDDd0050d1E084dFc72d5d06447Cc10bcD3fEF60F"
+  ],
+  "numDeployments": 1,
+  "deploymentInfo": {
+    "network": "sonic",
+    "chainId": 146,
+    "deployer": "0xDDd0050d1E084dFc72d5d06447Cc10bcD3fEF60F",
+    "deployedAt": "2025-06-29T12:00:00.000Z",
+    "gasPrice": "55000000000",
+    "gasLimit": "15000000",
+    "verified": true,
+    "verificationUrl": "https://sonicscan.org/address/0x968763BebE98e956dA5826780e36E2f21edb79a3#code",
+    "token": "0x0E5d746F01f4CDc76320c3349386176a873eAa40",
+    "swapTrigger": "0xb5F29296a670F09C5380abf0840920CEE65AeDA0",
+    "treasury": "0xDDd0050d1E084dFc72d5d06447Cc10bcD3fEF60F"
+  }
+}

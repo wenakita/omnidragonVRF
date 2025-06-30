@@ -1,0 +1,188 @@
+{
+  "deploymentInfo": {
+    "date": "2025-06-29",
+    "deployer": "0xDDd0050d1E084dFc72d5d06447Cc10bcD3fEF60F",
+    "strategy": "CREATE2 Universal Deployment",
+    "status": "complete",
+    "version": "v2.0.0"
+  },
+  "universalAddresses": {
+    "omniDragonDeployer": "0xDb24adBeCF6aAD00C8bb34b7828EC1dd095c2e2C",
+    "omniDRAGON": "0x0E5d746F01f4CDc76320c3349386176a873eAa40"
+  },
+  "infrastructure": {
+    "create2Factory": "0xAA28020DDA6b954D16208eccF873D79AC6533833",
+    "chainRegistry": "0x567eB27f7EA8c69988e30B045987Ad58A597685C"
+  },
+  "networks": {
+    "sonic": {
+      "chainId": 146,
+      "name": "Sonic",
+      "rpc": "https://eu.endpoints.matrixed.link/rpc/sonic?auth=p886of4gitu82",
+      "explorer": "https://sonicscan.org",
+      "layerZero": {
+        "eid": 30332,
+        "endpoint": "0x6F475642a6e85809B1c36Fa62763669b1b48DD5B"
+      },
+      "gas": {
+        "price": "55000000000",
+        "limit": "20000000"
+      },
+      "contracts": {
+        "omniDragonDeployer": "0xDb24adBeCF6aAD00C8bb34b7828EC1dd095c2e2C",
+        "omniDRAGON": "0x0E5d746F01f4CDc76320c3349386176a873eAa40"
+      },
+      "transactions": {
+        "omniDragonDeployer": "0x974408d33b8118b5f839834440ef6ef3ac3ef5efad1e651124f4923bd898d7fd",
+        "omniDRAGON": "0x6531cafedf43ac75beb28443838a4f8476108fcbc7f85c103e4c9a0e2e454728"
+      },
+      "gasUsed": {
+        "omniDragonDeployer": 6064222,
+        "omniDRAGON": 4172702
+      },
+      "verification": {
+        "omniDragonDeployer": {
+          "status": "verified",
+          "url": "https://sonicscan.org/address/0xDb24adBeCF6aAD00C8bb34b7828EC1dd095c2e2C#code"
+        },
+        "omniDRAGON": {
+          "status": "verified",
+          "url": "https://sonicscan.org/address/0x0E5d746F01f4CDc76320c3349386176a873eAa40#code"
+        }
+      }
+    },
+    "arbitrum": {
+      "chainId": 42161,
+      "name": "Arbitrum One",
+      "rpc": "https://eu.endpoints.matrixed.link/rpc/arbitrum?auth=p886of4gitu82",
+      "explorer": "https://arbiscan.io",
+      "layerZero": {
+        "eid": 30110,
+        "endpoint": "0x1a44076050125825900e736c501f859c50fE728c"
+      },
+      "gas": {
+        "price": "3000000000",
+        "limit": "10000000"
+      },
+      "contracts": {
+        "omniDragonDeployer": "0xDb24adBeCF6aAD00C8bb34b7828EC1dd095c2e2C",
+        "omniDRAGON": "0x0E5d746F01f4CDc76320c3349386176a873eAa40"
+      },
+      "transactions": {
+        "omniDragonDeployer": "0x35892518925572e80d01298819c36e38213ca81b7bf0c5edb8cfdd3049787f32",
+        "omniDRAGON": "0x8d583357a4c44680d741d8d1601e516f3fe314640b58602e03bcdaee721ebd36"
+      },
+      "gasUsed": {
+        "omniDragonDeployer": 5960966,
+        "omniDRAGON": 3686317
+      },
+      "verification": {
+        "omniDragonDeployer": {
+          "status": "verified",
+          "url": "https://arbiscan.io/address/0xDb24adBeCF6aAD00C8bb34b7828EC1dd095c2e2C#code"
+        },
+        "omniDRAGON": {
+          "status": "verified",
+          "url": "https://arbiscan.io/address/0x0E5d746F01f4CDc76320c3349386176a873eAa40#code"
+        }
+      }
+    },
+    "avalanche": {
+      "chainId": 43114,
+      "name": "Avalanche C-Chain",
+      "rpc": "https://eu.endpoints.matrixed.link/rpc/avax?auth=p886of4gitu82",
+      "explorer": "https://snowtrace.io",
+      "layerZero": {
+        "eid": 30106,
+        "endpoint": "0x1a44076050125825900e736c501f859c50fE728c"
+      },
+      "gas": {
+        "price": "25000000000",
+        "limit": "15000000"
+      },
+      "contracts": {
+        "omniDragonDeployer": "0xDb24adBeCF6aAD00C8bb34b7828EC1dd095c2e2C",
+        "omniDRAGON": "0x0E5d746F01f4CDc76320c3349386176a873eAa40"
+      },
+      "transactions": {
+        "omniDragonDeployer": "0xfbe9ade7e15dd506380be5409019f2a8663abb605ff61a578567dc4871399e3d",
+        "omniDRAGON": "0x8ebc64018a03b6279a863617afb7985fa1942f1e0ab622909dda017ba32939c4"
+      },
+      "gasUsed": {
+        "omniDragonDeployer": 5849136,
+        "omniDRAGON": 3685191
+      },
+      "verification": {
+        "omniDragonDeployer": {
+          "status": "verified",
+          "url": "https://snowtrace.io/address/0xDb24adBeCF6aAD00C8bb34b7828EC1dd095c2e2C#code"
+        },
+        "omniDRAGON": {
+          "status": "verified",
+          "url": "https://snowtrace.io/address/0x0E5d746F01f4CDc76320c3349386176a873eAa40#code"
+        }
+      }
+    }
+  },
+  "technical": {
+    "salts": {
+      "deployerSalt": "0x05fef7bf931b270856151b5974641227c04520c8757943ffc0aadf9f31556507",
+      "omniDRAGONSalt": "0xeb2a79d209d2f313d18b6ecaa53a2c094cee6df6d7d31f093afc24b239ce8ce5",
+      "baseSalt": "OMNIDRAGON_FRESH_V2_2025_DELEGATE"
+    },
+    "bytecodeHashes": {
+      "omniDragonDeployer": "0x0a5d0564ce5546ff83e3d207ed34debe19a1118057d3e8e6748ae340d5848581",
+      "omniDRAGON": "0x75d14abd2e986249ae8c38c762b9ecfdc706d865d62e2e9ba1308b5f46671e07"
+    },
+    "constructorArgs": {
+      "omniDragonDeployer": ["0xAA28020DDA6b954D16208eccF873D79AC6533833"],
+      "omniDRAGON": ["0x567eB27f7EA8c69988e30B045987Ad58A597685C", "0xDDd0050d1E084dFc72d5d06447Cc10bcD3fEF60F"]
+    },
+    "compiler": {
+      "version": "0.8.20",
+      "optimizer": {
+        "enabled": true,
+        "runs": 100
+      },
+      "viaIR": false
+    }
+  },
+  "scripts": {
+    "deployment": [
+      "deploy-omnidragon-deployer-universal",
+      "deploy-omnidragon-universal"
+    ],
+    "verification": [
+      "verify-universal-contracts"
+    ],
+    "utilities": [
+      "predict-universal-deployer-address",
+      "predict-universal-omnidragon-address",
+      "deployment-status"
+    ]
+  },
+  "achievements": {
+    "universalAddresses": true,
+    "multiChainDeployment": true,
+    "fullVerification": true,
+    "automatedTools": true,
+    "documentation": true,
+    "gasOptimization": true
+  },
+  "statistics": {
+    "networksDeployed": 3,
+    "contractsDeployed": 6,
+    "contractsVerified": 6,
+    "totalGasUsed": {
+      "omniDragonDeployer": 17874324,
+      "omniDRAGON": 11544210,
+      "total": 29418534
+    },
+    "averageGasPerContract": 4903089
+  },
+  "futureExpansion": {
+    "supportedNetworks": ["base", "polygon", "optimism", "bsc", "ethereum"],
+    "readyForExpansion": true,
+    "maintainsSameAddresses": true
+  }
+} 

@@ -1,0 +1,25 @@
+{
+  "network": "avalanche",
+  "chainId": 43114,
+  "address": "0xB3C189bF3aef85Aa07B178c16e35BaA5461705b9",
+  "libraryAddress": "0x4376aBe6f6E86f5C973a557b62F6aE1981c4d239",
+  "deployer": "0xDDd0050d1E084dFc72d5d06447Cc10bcD3fEF60F",
+  "blockNumber": null,
+  "transactionHash": "0xf6f1e71b773cf4ac30a261f1d577762be374e1df94136263d0d57f7d6d41c356",
+  "gasUsed": "1796868",
+  "timestamp": "2025-06-29T09:15:23.192Z",
+  "configuration": {
+    "priceOracle": "0x1aD1778F47c44260CE9207E15C44D40C45991c6A",
+    "totalFee": 1000,
+    "initialJackpotFee": 300
+  },
+  "libraries": {
+    "EnhancedDragonMarketAnalyzer": "0x4376aBe6f6E86f5C973a557b62F6aE1981c4d239"
+  },
+  "contractName": "DragonFeeManager",
+  "compiler": {
+    "version": "0.8.20",
+    "optimization": true,
+    "runs": 200
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "address": "0x70fC250FFda3176f5CaE2eF68b2e4878b076B683",
+  "args": [
+    "0x0E5d746F01f4CDc76320c3349386176a873eAa40",
+    "0xb5F29296a670F09C5380abf0840920CEE65AeDA0",
+    "0xDDd0050d1E084dFc72d5d06447Cc10bcD3fEF60F"
+  ],
+  "numDeployments": 1,
+  "deploymentInfo": {
+    "network": "avalanche",
+    "chainId": 43114,
+    "deployer": "0xDDd0050d1E084dFc72d5d06447Cc10bcD3fEF60F",
+    "deployedAt": "2025-06-29T08:42:47.626Z",
+    "verified": false,
+    "verificationUrl": "https://snowtrace.io/address/0x70fC250FFda3176f5CaE2eF68b2e4878b076B683#code",
+    "token": "0x0E5d746F01f4CDc76320c3349386176a873eAa40",
+    "swapTrigger": "0xb5F29296a670F09C5380abf0840920CEE65AeDA0",
+    "treasury": "0xDDd0050d1E084dFc72d5d06447Cc10bcD3fEF60F",
+    "deploymentMethod": "regular"
+  }
+}

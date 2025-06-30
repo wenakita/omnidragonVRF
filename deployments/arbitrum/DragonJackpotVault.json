@@ -1,0 +1,19 @@
+{
+  "address": "0x91CB2B86215e53a70F41eF58E016E11cD8825a5A",
+  "args": [
+    "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
+    "0xb5F29296a670F09C5380abf0840920CEE65AeDA0"
+  ],
+  "numDeployments": 1,
+  "deploymentInfo": {
+    "network": "arbitrum",
+    "chainId": 42161,
+    "deployer": "0xDDd0050d1E084dFc72d5d06447Cc10bcD3fEF60F",
+    "deployedAt": "2025-06-29T08:43:03.349Z",
+    "verified": false,
+    "verificationUrl": "https://arbiscan.io/address/0x91CB2B86215e53a70F41eF58E016E11cD8825a5A#code",
+    "wrappedNativeToken": "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
+    "feeManager": "0xb5F29296a670F09C5380abf0840920CEE65AeDA0",
+    "deploymentMethod": "regular"
+  }
+}

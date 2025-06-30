@@ -1,0 +1,39 @@
+{
+  "address": "0x56eAb9e1f775d0f43cf831d719439e0bF6748234",
+  "args": [
+    "0x968763BebE98e956dA5826780e36E2f21edb79a3",
+    "0x33E1eaCeCC03c7f7558011d73F806D022414Fee0",
+    "0x4cdda12f479dcfaa926061e3ca6349d6452105d9",
+    "0x54D0DC2DcF1A1994aF3391A68FCF80A9C46FC2fd",
+    146
+  ],
+  "numDeployments": 1,
+  "deploymentInfo": {
+    "network": "sonic",
+    "chainId": 146,
+    "deployer": "0xDDd0050d1E084dFc72d5d06447Cc10bcD3fEF60F",
+    "deployedAt": "2025-06-30T01:03:38.236Z",
+    "verified": true,
+    "verificationUrl": "https://sonicscan.org/address/0x56eAb9e1f775d0f43cf831d719439e0bF6748234#code",
+    "deploymentMethod": "regular",
+    "integrations": {
+      "existingVRF": "0x1b1523b3254e076fcbcc992cbe2dc8f08458e538",
+      "randomnessProvider": "0x8476B99208F759864F155501B3C39983B18A1746",
+      "jackpotDistributor": "0x968763BebE98e956dA5826780e36E2f21edb79a3",
+      "veDRAGON": "0x33E1eaCeCC03c7f7558011d73F806D022414Fee0",
+      "redDRAGON": "0x53bA33D2392E37384159A45258Ec70Ca4bAD4817",
+      "marketManager": "0x4cdda12f479dcfaa926061e3ca6349d6452105d9",
+      "priceOracle": "0x54D0DC2DcF1A1994aF3391A68FCF80A9C46FC2fd",
+      "feeManager": "0x071E337B46a56eca548D5c545b8F723296B36408",
+      "jackpotVault": "0xABa4df84B208ecedac2EcEcc988648d2847Ec310"
+    },
+    "lotteryConfig": {
+      "baseWinProbability": "0.004% at $10 (scales to 4% at $10,000)",
+      "minSwapAmount": "$10 USD",
+      "rewardPercentage": "69% of jackpot",
+      "vrfEnabled": true,
+      "active": true,
+      "note": "MASSIVE 69% jackpot rewards with correct probability scaling! 🔥"
+    }
+  }
+}

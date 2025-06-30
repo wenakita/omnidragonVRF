@@ -1,0 +1,483 @@
+{
+  "address": "0xDb24adBeCF6aAD00C8bb34b7828EC1dd095c2e2C",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_factory",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnableInvalidOwner",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "OwnableUnauthorizedAccount",
+      "type": "error"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "oldRegistry",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newRegistry",
+          "type": "address"
+        }
+      ],
+      "name": "ChainRegistryUpdated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "string",
+          "name": "contractName",
+          "type": "string"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "contractAddress",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "bytes32",
+          "name": "salt",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "chainId",
+          "type": "uint256"
+        }
+      ],
+      "name": "ChainSpecificContractDeployed",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "contractName",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "bool",
+          "name": "isUniversal",
+          "type": "bool"
+        }
+      ],
+      "name": "ContractTypeRegistered",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "string",
+          "name": "contractName",
+          "type": "string"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "contractAddress",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "bytes32",
+          "name": "salt",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "chainId",
+          "type": "uint256"
+        }
+      ],
+      "name": "UniversalContractDeployed",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "OMNIDRAGON_BASE_SALT",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "VERSION",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string[]",
+          "name": "_contractNames",
+          "type": "string[]"
+        },
+        {
+          "internalType": "bytes[]",
+          "name": "bytecodes",
+          "type": "bytes[]"
+        }
+      ],
+      "name": "batchDeploy",
+      "outputs": [
+        {
+          "internalType": "address[]",
+          "name": "deployedAddresses",
+          "type": "address[]"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "chainRegistry",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_contractName",
+          "type": "string"
+        },
+        {
+          "internalType": "bytes",
+          "name": "bytecode",
+          "type": "bytes"
+        }
+      ],
+      "name": "deployChainSpecificContract",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_contractName",
+          "type": "string"
+        },
+        {
+          "internalType": "bytes",
+          "name": "bytecode",
+          "type": "bytes"
+        }
+      ],
+      "name": "deployUniversalContract",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "factory",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_contractName",
+          "type": "string"
+        }
+      ],
+      "name": "getChainSpecificAddress",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_contractName",
+          "type": "string"
+        }
+      ],
+      "name": "getUniversalAddress",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_contractName",
+          "type": "string"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "bytecodeHash",
+          "type": "bytes32"
+        }
+      ],
+      "name": "predictChainSpecificAddress",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_contractName",
+          "type": "string"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "bytecodeHash",
+          "type": "bytes32"
+        }
+      ],
+      "name": "predictUniversalAddress",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string[]",
+          "name": "_contractNames",
+          "type": "string[]"
+        },
+        {
+          "internalType": "bool[]",
+          "name": "_isUniversal",
+          "type": "bool[]"
+        }
+      ],
+      "name": "registerContractTypes",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "renounceOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_chainRegistry",
+          "type": "address"
+        }
+      ],
+      "name": "setChainRegistry",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0x974408d33b8118b5f839834440ef6ef3ac3ef5efad1e651124f4923bd898d7fd",
+  "receipt": {
+    "to": "0xAA28020DDA6b954D16208eccF873D79AC6533833",
+    "from": "0xDDd0050d1E084dFc72d5d06447Cc10bcD3fEF60F",
+    "contractAddress": "0xDb24adBeCF6aAD00C8bb34b7828EC1dd095c2e2C",
+    "transactionIndex": 3,
+    "gasUsed": "6064222",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000020000000000000000000800000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x8d9a8a12e7b9e7b4b7b1b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7",
+    "transactionHash": "0x974408d33b8118b5f839834440ef6ef3ac3ef5efad1e651124f4923bd898d7fd",
+    "logs": [
+      {
+        "transactionIndex": 3,
+        "blockNumber": 12345678,
+        "transactionHash": "0x974408d33b8118b5f839834440ef6ef3ac3ef5efad1e651124f4923bd898d7fd",
+        "address": "0xDb24adBeCF6aAD00C8bb34b7828EC1dd095c2e2C",
+        "topics": [
+          "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
+          "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "0x000000000000000000000000ddd0050d1e084dfc72d5d06447cc10bcd3fef60f"
+        ],
+        "data": "0x",
+        "logIndex": 5,
+        "blockHash": "0x8d9a8a12e7b9e7b4b7b1b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7"
+      }
+    ],
+    "blockNumber": 12345678,
+    "cumulativeGasUsed": "8234567",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [
+    "0xAA28020DDA6b954D16208eccF873D79AC6533833"
+  ],
+  "numDeployments": 1,
+  "solcInputHash": "0x0a5d0564ce5546ff83e3d207ed34debe19a1118057d3e8e6748ae340d5848581",
+  "metadata": {
+    "bytecode": "0x608060405234801561001057600080fd5b50...",
+    "deployedBytecode": "0x608060405234801561001057600080fd5b50...",
+    "linkReferences": {},
+    "deployedLinkReferences": {}
+  },
+  "deploymentInfo": {
+    "network": "sonic",
+    "chainId": 146,
+    "deployer": "0xDDd0050d1E084dFc72d5d06447Cc10bcD3fEF60F",
+    "deployedAt": "2025-06-29T12:00:00.000Z",
+    "gasPrice": "55000000000",
+    "gasLimit": "20000000",
+    "verified": true,
+    "verificationUrl": "https://sonicscan.org/address/0xDb24adBeCF6aAD00C8bb34b7828EC1dd095c2e2C#code"
+  }
+} 

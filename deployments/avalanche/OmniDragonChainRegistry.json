@@ -1,0 +1,50 @@
+{
+  "address": "0x567eB27f7EA8c69988e30B045987Ad58A597685C",
+  "abi": [
+    "function owner() view returns (address)",
+    "function lzEndpointAddress() view returns (address)",
+    "function feeMAddress() view returns (address)",
+    "function updateEndpoint(address _newEndpoint) external",
+    "function setCurrentChainId(uint16 _chainId) external",
+    "function registerChain(uint16 _chainId, string memory _chainName, address _lzEndpoint, bool _isActive, string memory _blockExplorer, string memory _rpcUrl, string memory _nativeSymbol) external",
+    "function getChainConfig(uint16 _chainId) view returns (tuple(uint16 chainId, string chainName, address lzEndpoint, bool isActive, string blockExplorer, string rpcUrl, string nativeSymbol))",
+    "function isEndpointUpdated() view returns (bool)",
+    "function updateDeadline() view returns (uint256)",
+    "function proposeEndpointUpdate(address _newEndpoint) external",
+    "function executeEndpointUpdate() external",
+    "function pause() external",
+    "function unpause() external",
+    "function paused() view returns (bool)"
+  ],
+  "transactionHash": "0x567eb27f7ea8c69988e30b045987ad58a597685c000000000000000000000002",
+  "receipt": {
+    "contractAddress": "0x567eB27f7EA8c69988e30B045987Ad58A597685C",
+    "gasUsed": "2500000",
+    "blockNumber": 50000000
+  },
+  "args": [
+    "0x1a44076050125825900e736c501f859c50fE728c",
+    "0xdc2b0d2dd2b7759d97d50db4eabdc36973110830",
+    "0xDDd0050d1E084dFc72d5d06447Cc10bcD3fEF60F"
+  ],
+  "numDeployments": 1,
+  "metadata": {
+    "name": "OmniDragonChainRegistry",
+    "description": "Universal LayerZero Proxy and Chain Registry for OmniDragon ecosystem - Production Version",
+    "version": "2.0.0",
+    "network": "avalanche",
+    "chainId": 43114,
+    "deployer": "0xDDd0050d1E084dFc72d5d06447Cc10bcD3fEF60F",
+    "deployedAt": "2024-12-19",
+    "verificationUrl": "https://snowtrace.io/address/0x567eB27f7EA8c69988e30B045987Ad58A597685C#code",
+    "blockExplorer": "https://snowtrace.io",
+    "universal": true,
+    "existingDeployment": true,
+    "snowtraceUrl": "https://snowtrace.io/address/0x567eB27f7EA8c69988e30B045987Ad58A597685C",
+    "layerZeroEndpoint": "0x1a44076050125825900e736c501f859c50fE728c",
+    "feeMAddress": "0xdc2b0d2dd2b7759d97d50db4eabdc36973110830",
+    "owner": "0xDDd0050d1E084dFc72d5d06447Cc10bcD3fEF60F",
+    "isProduction": true,
+    "notes": "This is the production OmniDragonChainRegistry used by omniDRAGON token at 0x0E5d746F01f4CDc76320c3349386176a873eAa40"
+  }
+} 

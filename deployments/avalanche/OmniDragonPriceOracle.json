@@ -1,0 +1,33 @@
+{
+  "network": "avalanche",
+  "chainId": 43114,
+  "address": "0x1aD1778F47c44260CE9207E15C44D40C45991c6A",
+  "libraryAddress": "0x4376aBe6f6E86f5C973a557b62F6aE1981c4d239",
+  "deployer": "0xDDd0050d1E084dFc72d5d06447Cc10bcD3fEF60F",
+  "blockNumber": null,
+  "transactionHash": "0x6259ad7459f689dee5368eef3285ce25179108401eef6dfd6ee8f69d44d0c31f",
+  "gasUsed": "3982411",
+  "timestamp": "2025-06-29T09:15:16.863Z",
+  "configuration": {
+    "nativeSymbol": "AVAX",
+    "quoteSymbol": "USD",
+    "layerzeroEndpoint": "0x1a44076050125825900e736c501f859c50fE728c",
+    "oracles": {
+      "chainlinkSUSD": "0x0A77230d17318075983913bC2145DB16C7366156",
+      "bandProtocol": "0x0000000000000000000000000000000000000000",
+      "api3Proxy": "0x0000000000000000000000000000000000000000",
+      "pythNetwork": "0x0000000000000000000000000000000000000000"
+    },
+    "totalFee": 1000,
+    "initialJackpotFee": 300
+  },
+  "libraries": {
+    "EnhancedDragonMarketAnalyzer": "0x4376aBe6f6E86f5C973a557b62F6aE1981c4d239"
+  },
+  "contractName": "OmniDragonPriceOracle",
+  "compiler": {
+    "version": "0.8.20",
+    "optimization": true,
+    "runs": 200
+  }
+}

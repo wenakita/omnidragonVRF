@@ -13,10 +13,11 @@
         "decimals": 18
       },
       "contracts": {
-        "omniDragonDeployer": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
         "create2Factory": "0xAA28020DDA6b954D16208eccF873D79AC6533833",
         "omniDragonChainRegistry": "0x567eB27f7EA8c69988e30B045987Ad58A597685C",
-        "omniDRAGON": "0xf00F4Fe8c4C1Ac02539dFeE71423eaAD52AE363D"
+        "omniDragonDeployer": "0xDb24adBeCF6aAD00C8bb34b7828EC1dd095c2e2C",
+        "omniDRAGON": "0x0E5d746F01f4CDc76320c3349386176a873eAa40",
+        "layerZeroProxy": "0x6Fa6abF394d4f827988FBAD17CadFb506b83c3e8"
       }
     },
     "arbitrum": {
@@ -32,10 +33,11 @@
         "decimals": 18
       },
       "contracts": {
-        "omniDragonDeployer": "0x9Bb7c14AA69B9599B6745f0DBd57F6a4363F8E4b",
         "create2Factory": "0xAA28020DDA6b954D16208eccF873D79AC6533833",
         "omniDragonChainRegistry": "0x567eB27f7EA8c69988e30B045987Ad58A597685C",
-        "omniDRAGON": "0xf00F4Fe8c4C1Ac02539dFeE71423eaAD52AE363D"
+        "omniDragonDeployer": "0xDb24adBeCF6aAD00C8bb34b7828EC1dd095c2e2C",
+        "omniDRAGON": "0x0E5d746F01f4CDc76320c3349386176a873eAa40",
+        "layerZeroProxy": "0x90017f1f8F76877f465EC621ff8c1516534F481C"
       }
     },
     "avalanche": {
@@ -51,87 +53,31 @@
         "decimals": 18
       },
       "contracts": {
-        "omniDragonDeployer": "0x77Ef362CC718a4bDdbfdC420CD9E57d27Ae350d8",
         "create2Factory": "0xAA28020DDA6b954D16208eccF873D79AC6533833",
         "omniDragonChainRegistry": "0x567eB27f7EA8c69988e30B045987Ad58A597685C",
-        "omniDRAGON": "0xf00F4Fe8c4C1Ac02539dFeE71423eaAD52AE363D"
+        "omniDragonDeployer": "0xDb24adBeCF6aAD00C8bb34b7828EC1dd095c2e2C",
+        "omniDRAGON": "0x0E5d746F01f4CDc76320c3349386176a873eAa40",
+        "layerZeroProxy": "0x8426c64944e3eaF9B56AA20F5f72752EF5A51C88"
       }
     }
   },
   "deployment": {
-    "contractName": "Dragon",
+    "contractName": "omniDRAGON",
     "version": "v2.0.0-lz-v2",
-    "initialMintingChain": "sonic",
-    "initialSupply": "6942000000000000000000000",
-    "gasLimits": {
-      "sonic": 15000000,
-      "arbitrum": 15000000,
-      "avalanche": 15000000
-    },
-    "fees": {
-      "buy": {
-        "jackpot": 690,
-        "veDRAGON": 241,
-        "burn": 69,
-        "total": 1000
-      },
-      "sell": {
-        "jackpot": 690,
-        "veDRAGON": 241,
-        "burn": 69,
-        "total": 1000
-      },
-      "transfer": {
-        "jackpot": 0,
-        "veDRAGON": 0,
-        "burn": 0,
-        "total": 0
-      }
-    },
+    "status": "deployed",
+    "deployedAt": "2025-06-29",
+    "deployer": "0xDDd0050d1E084dFc72d5d06447Cc10bcD3fEF60F",
     "universalAddresses": {
-      "strategy": "chainRegistryProxy",
+      "strategy": "CREATE2 with Universal Deployer",
       "enabled": true,
-      "description": "Deploy identical addresses across all chains using OmniDragonChainRegistry as LayerZero endpoint proxy"
-    }
-  },
-  "chainRegistryProxy": {
-    "description": "Configuration for identical addresses across chains",
-    "placeholderEndpoint": "0x0000000000000000000000000000000000000001",
-    "feeMAddress": "0x0000000000000000000000000000000000000002",
-    "delegate": "0x0000000000000000000000000000000000000003",
-    "deploymentOrder": [
-      "omniDragonChainRegistry",
-      "omniDRAGON"
-    ],
-    "salts": {
-      "omniDragonChainRegistry": "OMNIDRAGON_CHAIN_REGISTRY_V1",
-      "omniDRAGON": "OMNIDRAGON_TOKEN_V1"
-    },
-    "addressPrediction": {
-      "enabled": true,
-      "verifyBeforeDeployment": true
+      "description": "Using OmniDragonDeployer deployed via CREATE2 to ensure same addresses across all chains",
+      "omniDragonDeployer": "0xDb24adBeCF6aAD00C8bb34b7828EC1dd095c2e2C",
+      "omniDRAGON": "0x0E5d746F01f4CDc76320c3349386176a873eAa40"
     }
   },
   "layerzero": {
     "version": "v2",
-    "features": [
-      "OFT (Omnichain Fungible Token)",
-      "Burn-and-mint mechanism",
-      "Enforced options support",
-      "Diamond inheritance resolved",
-      "Cross-chain messaging",
-      "DVN configuration support",
-      "Universal addresses via proxy pattern"
-    ],
-    "messageTypes": {
-      "SEND": 1,
-      "SEND_AND_CALL": 2
-    },
-    "sharedDecimals": 6,
-    "proxyConfiguration": {
-      "enabled": true,
-      "description": "LayerZero calls are proxied through OmniDragonChainRegistry for universal addresses"
-    }
+    "sharedDecimals": 6
   },
   "verification": {
     "sonic": {

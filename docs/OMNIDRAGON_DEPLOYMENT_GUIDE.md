@@ -34,7 +34,7 @@ The following contracts **MUST** have identical addresses across all chains:
 6. **veDRAGON** - Voting escrow token
 
 #### Phase 3: DeFi Infrastructure
-7. **OmniDragonFeeManager** - Consolidated fee management
+7. **DragonFeeManager** - Consolidated fee management
 8. **OmniDragonPriceOracle** - Price oracle system (CREATE2)
 9. **veDRAGONRevenueDistributor** - Revenue sharing for veDRAGON holders
 

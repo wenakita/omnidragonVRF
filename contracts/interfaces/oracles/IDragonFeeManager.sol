@@ -1,91 +1,120 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.20;
 
 /**
  * @title IDragonFeeManager
- * @dev Legacy interface - use IOmniDragonFeeManager for new implementations
- *
- * Manages fee distribution to voters based on voting weight and partner participation
- * Facilitates democratic revenue sharing within the OmniDragon ecosystem
- * https://x.com/sonicreddragon
- * https://t.me/sonicreddragon
+ * @dev Consolidated interface for Dragon Fee Manager and Market Maker
+ * Combines fee management, market making, and revenue distribution functionality
  */
 interface IDragonFeeManager {
-    // Events
-    event VotesRecorded(uint256 indexed period, uint256 indexed partnerId, address indexed user, uint256 votes);
-    event FeesDeposited(uint256 indexed period, uint256 indexed partnerId, address indexed token, uint256 amount);
-    event FeesClaimed(uint256 indexed period, uint256 indexed partnerId, address indexed user, address token, uint256 amount);
-    event PeriodRolled(uint256 indexed oldPeriod, uint256 indexed newPeriod);
-    event GeneralFeesDistributed(address indexed token, uint256 amount);
+    
+    /**
+     * @dev Calculate dynamic fees based on market conditions
+     * @param user User address
+     * @param transactionType Type of transaction (0=buy, 1=sell, 2=transfer)
+     * @param amount Transaction amount
+     * @param marketVolatility Current market volatility score
+     * @param liquidityDepth Current liquidity depth
+     * @return jackpotFee Jackpot fee amount
+     * @return veDRAGONFee veDRAGON fee amount
+     * @return burnFee Burn fee amount
+     * @return totalFee Total fee amount
+     */
+    function calculateDynamicFees(
+        address user,
+        uint8 transactionType,
+        uint256 amount,
+        uint256 marketVolatility,
+        uint256 liquidityDepth
+    ) external view returns (uint256 jackpotFee, uint256 veDRAGONFee, uint256 burnFee, uint256 totalFee);
+    
+    /**
+     * @dev Update market data for fee calculations
+     * @param token Token address
+     * @param volume Trading volume
+     * @param price Current price
+     * @param timestamp Update timestamp
+     */
+    function updateMarketData(address token, uint256 volume, uint256 price, uint256 timestamp) external;
+    
+    /**
+     * @dev Set adaptive fee parameters
+     * @param baseMultiplier Base fee multiplier
+     * @param volatilityThreshold Volatility threshold for fee adjustments
+     * @param liquidityThreshold Liquidity threshold for fee adjustments
+     */
+    function setAdaptiveFeeParameters(uint256 baseMultiplier, uint256 volatilityThreshold, uint256 liquidityThreshold) external;
+    
+    /**
+     * @dev Check if adaptive fees are enabled
+     * @return enabled True if adaptive fees are enabled
+     */
+    function isAdaptiveFeesEnabled() external view returns (bool);
 
     /**
-     * @dev Records votes for a partner by a user
-     * @param _partnerId ID of the partner being voted for
-     * @param _user Address of the voter
-     * @param _votes Amount of votes cast
+     * @dev Get current fee configuration
+     * @return totalFee Total fee in basis points
+     * @return burnFee Burn fee in basis points
+     * @return jackpotFee Jackpot fee in basis points
+     * @return liquidityFee Liquidity fee in basis points
      */
-    function recordVotes(uint256 _partnerId, address _user, uint256 _votes) external;
+    function getFeeConfiguration() external view returns (
+        uint256 totalFee,
+        uint256 burnFee,
+        uint256 jackpotFee,
+        uint256 liquidityFee
+    );
 
     /**
-     * @dev Deposits fees for a specific partner
-     * @param _partnerId ID of the partner
-     * @param _token Token address of the fee
-     * @param _amount Amount of fees
+     * @dev Update fee configuration
+     * @param totalFee New total fee in basis points
+     * @param jackpotFee New jackpot fee in basis points
      */
-    function depositFees(uint256 _partnerId, address _token, uint256 _amount) external;
+    function updateFeeConfiguration(uint256 totalFee, uint256 jackpotFee) external;
 
     /**
-     * @dev Distributes general fees not associated with a specific partner
-     * @param _token Token address of the fee
-     * @param _amount Amount of fees
+     * @dev Get market liquidity data
+     * @return totalLiquidity Total liquidity in the market
+     * @return availableLiquidity Available liquidity for trading
+     * @return utilizationRate Liquidity utilization rate
      */
-    function distributeGeneralFees(address _token, uint256 _amount) external;
+    function getMarketLiquidity() external view returns (
+        uint256 totalLiquidity,
+        uint256 availableLiquidity,
+        uint256 utilizationRate
+    );
 
     /**
-     * @dev Claims fees for a specific period, partner, and token
-     * @param _period Period to claim for
-     * @param _partnerId ID of the partner
-     * @param _token Token address to claim
-     * @return amount Amount claimed
+     * @dev Calculate market impact for a trade
+     * @param tradeSize Size of the trade
+     * @param isBuy True if buy trade, false if sell
+     * @return impact Market impact in basis points
      */
-    function claimFees(uint256 _period, uint256 _partnerId, address _token) external returns (uint256 amount);
+    function calculateMarketImpact(uint256 tradeSize, bool isBuy) external view returns (uint256 impact);
 
     /**
-     * @dev Gets the amount of fees claimable by a user
-     * @param _period Period to check
-     * @param _partnerId ID of the partner
-     * @param _user Address of the user
-     * @param _token Token address to check
-     * @return amount Claimable amount
+     * @dev Get trading volume statistics
+     * @return dailyVolume Daily trading volume
+     * @return totalVolume Total cumulative volume
+     * @return averageTradeSize Average trade size
      */
-    function getUserClaimable(uint256 _period, uint256 _partnerId, address _user, address _token) external view returns (uint256 amount);
+    function getVolumeStats() external view returns (
+        uint256 dailyVolume,
+        uint256 totalVolume,
+        uint256 averageTradeSize
+    );
 
     /**
-     * @dev Gets the current period
-     * @return period Current period
+     * @dev Update jackpot size
+     * @param newJackpotSize New jackpot size
      */
-    function getCurrentPeriod() external view returns (uint256 period);
+    function updateJackpotSize(uint256 newJackpotSize) external;
 
     /**
-     * @dev Checks and rolls to a new period if needed
-     * @return newPeriod The current period after checking
+     * @dev Get current jackpot size
+     * @return jackpotSize Current jackpot size
      */
-    function checkAndRollPeriod() external returns (uint256 newPeriod);
+    function getJackpotSize() external view returns (uint256 jackpotSize);
 
-    /**
-     * @dev Gets the total votes for a partner in a period
-     * @param _period Period to check
-     * @param _partnerId ID of the partner
-     * @return votes Total votes
-     */
-    function getPartnerTotalVotes(uint256 _period, uint256 _partnerId) external view returns (uint256 votes);
-
-    /**
-     * @dev Gets a user's votes for a partner in a period
-     * @param _period Period to check
-     * @param _partnerId ID of the partner
-     * @param _user Address of the user
-     * @return votes User's votes
-     */
-    function getUserVotes(uint256 _period, uint256 _partnerId, address _user) external view returns (uint256 votes);
+    // Events - defined in implementing contract to avoid duplication
 } 

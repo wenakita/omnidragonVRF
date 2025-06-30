@@ -10,7 +10,7 @@ import { Address } from "@openzeppelin/contracts/utils/Address.sol";
 // AUDIT FIX: Removed unused veDRAGONMath import
 import { IChainlinkVRFIntegratorV2_5 } from "../../interfaces/external/chainlink/IChainlinkVRFIntegratorV2_5.sol";
 import { IOmniDragonVRFConsumerV2_5 } from "../../interfaces/external/chainlink/IOmniDragonVRFConsumerV2_5.sol";
-import { IDrandRandomnessProvider } from "../../interfaces/oracles/IDrandRandomnessProvider.sol";
+// Removed IDrandRandomnessProvider - using only Chainlink VRF
 import { MessagingReceipt } from "../../../lib/devtools/packages/oapp-evm/contracts/oapp/OAppSender.sol";
 import { MessagingFee } from "../../../lib/devtools/packages/oapp-evm/contracts/oapp/OApp.sol";
 import { IDragonJackpotDistributor } from "../../interfaces/lottery/IDragonJackpotDistributor.sol";
@@ -102,15 +102,14 @@ contract OmniDragonLotteryManager is Ownable, ReentrancyGuard {
     // ============ ENUMS ============
     
     enum RandomnessSource {
-        LOCAL_VRF,          // Local: Direct Chainlink VRF on Arbitrum (fast & secure)
-        CROSS_CHAIN_VRF,    // Cross-chain: Chainlink VRF via LayerZero (most secure)
-        PROVIDER_VRF        // Provider: Via OmniDragonRandomnessProvider (secure)
+        LOCAL_VRF,          // Local: Direct Chainlink VRF (fast & secure)
+        CROSS_CHAIN_VRF     // Cross-chain: Chainlink VRF via LayerZero (most secure)
     }
 
     // ============ STRUCTS ============
     
     struct InstantLotteryConfig {
-        uint256 baseWinProbability; // Base probability in basis points (1-10000)
+        uint256 baseWinProbability; // Base probability in PPM (parts per million) - UNUSED, kept for compatibility
         uint256 minSwapAmount;      // Minimum swap amount to qualify (in USD, scaled by 1e6)
         uint256 rewardPercentage;   // Percentage of jackpot as reward (in basis points)
         bool isActive;
@@ -141,7 +140,6 @@ contract OmniDragonLotteryManager is Ownable, ReentrancyGuard {
     // ============ STATE VARIABLES ============
     
     // Core dependencies
-    IDrandRandomnessProvider public randomnessProvider;
     IDragonJackpotDistributor public jackpotDistributor;
     IERC20 public veDRAGONToken;
     IERC20 public redDRAGONToken;
@@ -159,9 +157,7 @@ contract OmniDragonLotteryManager is Ownable, ReentrancyGuard {
     IOmniDragonPriceOracle public priceOracle;
     uint256 public immutable CHAIN_ID;
     
-    // Prize configuration (USD-based)
-    uint256 public basePrizeUSD = 100e6; // $100 base prize (6 decimals)
-    uint256 public maxPrizeUSD = 10000e6; // $10,000 max prize (6 decimals)
+    // Prize configuration removed - rewards are now dynamic based on jackpot vault balance
     
     // Rate limiting
     mapping(address => uint256) public lastSwapTime;
@@ -200,29 +196,25 @@ contract OmniDragonLotteryManager is Ownable, ReentrancyGuard {
     // Configuration events
     event InstantLotteryConfigured(uint256 baseWinProbability, uint256 minSwapAmount, uint256 rewardPercentage, bool isActive);
     event SwapContractAuthorized(address indexed swapContract, bool authorized);
-    event LotteryManagerInitialized(address randomnessProvider, address jackpotDistributor, address veDRAGONToken);
+    event LotteryManagerInitialized(address jackpotDistributor, address veDRAGONToken);
     event PriceOracleUpdated(address indexed newPriceOracle);
     event ChainMultiplierUpdated(uint256 oldMultiplier, uint256 newMultiplier);
-    event BasePrizeUpdated(uint256 oldPrize, uint256 newPrize);
-    event MaxPrizeUpdated(uint256 oldMaxPrize, uint256 newMaxPrize);
+    // Fixed prize events removed - rewards are now purely dynamic
     event MarketManagerUpdated(address indexed newMarketManager);
 
     // ============ CONSTRUCTOR ============
     
     constructor(
-        address _randomnessProvider,
         address _jackpotDistributor,
         address _veDRAGONToken,
         address _marketManager,
         address _priceOracle,
         uint256 _chainId
     ) Ownable(msg.sender) {
-        require(_randomnessProvider != address(0), "Invalid randomness provider");
         require(_jackpotDistributor != address(0), "Invalid jackpot distributor");
         require(_veDRAGONToken != address(0), "Invalid veDRAGON token");
         require(_marketManager != address(0), "Invalid market manager");
         
-        randomnessProvider = IDrandRandomnessProvider(_randomnessProvider);
         jackpotDistributor = IDragonJackpotDistributor(_jackpotDistributor);
         veDRAGONToken = IERC20(_veDRAGONToken);
         marketManager = IDragonMarketManager(_marketManager);
@@ -233,16 +225,16 @@ contract OmniDragonLotteryManager is Ownable, ReentrancyGuard {
         
         CHAIN_ID = _chainId;
         
-        // Initialize instant lottery config
+        // Initialize instant lottery config using PPM constants
         instantLotteryConfig = InstantLotteryConfig({
-            baseWinProbability: 100, // 1% base win probability
+            baseWinProbability: MIN_WIN_CHANCE_PPM, // 40 PPM = 0.004% (for compatibility only - actual calculation uses constants)
             minSwapAmount: MIN_SWAP_USD,
-            rewardPercentage: 100, // 1% of jackpot
+            rewardPercentage: 6900, // 69% of jackpot
             isActive: true,
             useVRFForInstant: true
         });
         
-        emit LotteryManagerInitialized(_randomnessProvider, _jackpotDistributor, _veDRAGONToken);
+        emit LotteryManagerInitialized(_jackpotDistributor, _veDRAGONToken);
     }
 
     // ============ MODIFIERS ============
@@ -289,9 +281,7 @@ contract OmniDragonLotteryManager is Ownable, ReentrancyGuard {
         }
     }
 
-    function setRandomnessProvider(address _randomnessProvider) external onlyOwner {
-        randomnessProvider = IDrandRandomnessProvider(_randomnessProvider);
-    }
+    // Removed setRandomnessProvider - using only Chainlink VRF
 
     function setJackpotVault(address _jackpotVault) external onlyOwner {
         require(_jackpotVault != address(0), "Invalid jackpot vault");
@@ -301,6 +291,11 @@ contract OmniDragonLotteryManager is Ownable, ReentrancyGuard {
     function setJackpotDistributor(address _jackpotDistributor) external onlyOwner {
         require(_jackpotDistributor != address(0), "Invalid jackpot distributor");
         jackpotDistributor = IDragonJackpotDistributor(_jackpotDistributor);
+    }
+
+    function setRedDRAGONToken(address _redDRAGONToken) external onlyOwner {
+        require(_redDRAGONToken != address(0), "Invalid redDRAGON token");
+        redDRAGONToken = IERC20(_redDRAGONToken);
     }
 
     function setMarketManager(address _marketManager) external onlyOwner {
@@ -321,23 +316,7 @@ contract OmniDragonLotteryManager is Ownable, ReentrancyGuard {
         emit ChainMultiplierUpdated(oldMultiplier, _chainMultiplier);
     }
 
-    function setBasePrizeUSD(uint256 _basePrizeUSD) external onlyOwner {
-        require(_basePrizeUSD > 0, "Base prize must be positive");
-        require(_basePrizeUSD <= maxPrizeUSD, "Base prize above max prize");
-        
-        uint256 oldBasePrize = basePrizeUSD;
-        basePrizeUSD = _basePrizeUSD;
-        emit BasePrizeUpdated(oldBasePrize, _basePrizeUSD);
-    }
-
-    function setMaxPrizeUSD(uint256 _maxPrizeUSD) external onlyOwner {
-        require(_maxPrizeUSD >= basePrizeUSD, "Max prize below base prize");
-        require(_maxPrizeUSD <= 100000e6, "Prize too high (max $100,000)");
-        
-        uint256 oldMaxPrize = maxPrizeUSD;
-        maxPrizeUSD = _maxPrizeUSD;
-        emit MaxPrizeUpdated(oldMaxPrize, _maxPrizeUSD);
-    }
+    // Fixed prize functions removed - rewards are now purely dynamic based on jackpot vault balance
 
     function setAuthorizedSwapContract(address swapContract, bool authorized) external onlyOwner {
         require(swapContract != address(0), "Invalid swap contract");
@@ -369,13 +348,49 @@ contract OmniDragonLotteryManager is Ownable, ReentrancyGuard {
     // ============ LOTTERY FUNCTIONS ============
     
     /**
+     * @notice Process a lottery entry (backward compatibility method)
+     * @param user User address
+     * @param amount Swap amount (will be treated as USD amount scaled by 1e6)
+     * @dev This is a simplified version for backward compatibility with omniDRAGON token
+     */
+    function processEntry(address user, uint256 amount) external nonReentrant onlyAuthorizedSwapContract {
+        // Only process lottery if we have a price oracle and can get accurate USD conversion
+        if (address(priceOracle) == address(0)) {
+            // No price oracle configured - swap succeeds but no lottery entry
+            return;
+        }
+        
+        uint256 swapAmountUSD;
+        bool priceObtained = false;
+        
+        try priceOracle.getAggregatedPrice() returns (int256 price, bool success, uint256 /* timestamp */) {
+            if (success && price > 0) {
+                // Convert token amount to USD using actual oracle price
+                // Price is typically in 8 decimals, amount is 18 decimals, want 6 decimals USD
+                // So: (amount * price) / 1e20 = (18 + 8 - 20 = 6 decimals)
+                swapAmountUSD = (amount * uint256(price)) / 1e20;
+                priceObtained = true;
+            }
+        } catch {
+            // Oracle failed - swap succeeds but no lottery entry
+        }
+        
+        // Only process lottery if we got a valid price and swap meets minimum threshold
+        if (priceObtained && swapAmountUSD >= MIN_SWAP_USD) {
+            // Process the instant lottery with actual USD amount from price oracle
+            processInstantLottery(user, swapAmountUSD);
+        }
+        // If no valid price or below minimum, swap succeeds but no lottery entry is created
+    }
+    
+    /**
      * @notice Process instant lottery for a swap transaction
      * @param user User who made the swap
      * @param swapAmountUSD Swap amount in USD (6 decimals)
      * @dev Called by authorized swap contracts only
      */
     function processInstantLottery(address user, uint256 swapAmountUSD) 
-        external 
+        public 
         nonReentrant 
         onlyAuthorizedSwapContract 
         rateLimited(user) 
@@ -449,21 +464,7 @@ contract OmniDragonLotteryManager is Ownable, ReentrancyGuard {
             }
         }
         
-        // If both VRF sources failed, try randomness provider
-        if (requestId == 0 && address(randomnessProvider) != address(0)) {
-            try randomnessProvider.getEstimatedFees() returns (uint256 vrfFee) {
-                if (address(this).balance >= vrfFee) {
-                    try randomnessProvider.requestRandomnessFromVRF{value: vrfFee}() returns (uint256 providerRequestId) {
-                        requestId = providerRequestId;
-                        source = RandomnessSource.PROVIDER_VRF;
-                    } catch {
-                        // Provider VRF also failed
-                    }
-                }
-            } catch {
-                // Fee estimation failed
-            }
-        }
+        // Removed randomnessProvider fallback - using only Chainlink VRF sources
         
         if (requestId == 0) {
             // All VRF sources failed - NEVER use insecure fallback randomness
@@ -509,15 +510,7 @@ contract OmniDragonLotteryManager is Ownable, ReentrancyGuard {
         _processVRFCallback(uint256(sequence), randomWords[0], RandomnessSource.CROSS_CHAIN_VRF);
     }
     
-    /**
-     * @notice Callback function for randomness provider VRF requests
-     * @dev Called by the randomness provider when VRF randomness is ready
-     */
-    function receiveRandomness(uint256 requestId, uint256 randomValue) external {
-        require(msg.sender == address(randomnessProvider), "Only randomness provider");
-        
-        _processVRFCallback(requestId, randomValue, RandomnessSource.PROVIDER_VRF);
-    }
+    // Removed receiveRandomness function - using only Chainlink VRF callbacks
     
     /**
      * @dev Process VRF callback and determine lottery outcome
@@ -587,18 +580,8 @@ contract OmniDragonLotteryManager is Ownable, ReentrancyGuard {
             return 0;
         }
         
-        // Calculate reward as percentage of current jackpot
+        // Calculate reward as percentage of current jackpot (purely dynamic)
         reward = (currentJackpot * instantLotteryConfig.rewardPercentage) / 10000;
-        
-        // Apply minimum and maximum reward bounds
-        uint256 minReward = convertUSDToNative(basePrizeUSD);
-        uint256 maxReward = convertUSDToNative(maxPrizeUSD);
-        
-        if (reward < minReward) {
-            reward = minReward;
-        } else if (reward > maxReward) {
-            reward = maxReward;
-        }
         
         return reward;
     }
