@@ -1,35 +1,82 @@
-# 🐉 OmniDragon VRF - Chainlink Hackathon
+# omniDRAGON Contracts
 
-## 🎯 Instant Lottery System with Chainlink VRF v2.5
+This repository contains the smart contracts for the omniDRAGON ecosystem, a cross-chain token using LayerZero v2 OFT (Omnichain Fungible Token) with CREATE2 deterministic deployment.
 
-**Live on Sonic Mainnet** - Every token swap triggers a lottery with provably fair randomness
+## Overview
 
-### 🚀 Innovation
-- **Per-swap lottery** - Instant gratification, no waiting
-- **Chainlink VRF v2.5** - Tamper-proof randomness
-- **Dynamic scaling** - $10 = 0.004% chance, $10,000+ = 4% chance
-- **Cross-chain ready** - LayerZero integration
+omniDRAGON is a hybrid cross-chain token ecosystem that includes:
+- **omniDRAGON**: The main cross-chain token using LayerZero v2 OFT
+- **redDRAGON**: A complementary token for the ecosystem
+- **veDRAGON**: A vote-escrowed token for governance
 
-### 📍 Live Contracts (Sonic Mainnet)
-```
-omniDRAGON Token:    0x2521f093D012beCDC16336c301A895fbad4DDbC5
-Lottery Manager:     0x56eAb9e1f775d0f43cf831d719439e0bF6748234
-VRF Integrator:      0x1b1523b3254e076fcbcc992cbe2dc8f08458e538
-```
+## Contract Structure
 
-### 🏆 Chainlink Integration
-- ✅ **VRF v2.5** - Secure lottery randomness
-- ✅ **Price Feeds** - USD-based probability scaling
-- ✅ **Cross-chain** - LayerZero message verification
+### Core Contracts
 
-### 🔧 Smart Contracts
-- `omniDRAGON.sol` - Main token with lottery integration
-- `OmniDragonLotteryManager.sol` - VRF lottery system
-- `ChainlinkVRFIntegratorV2_5.sol` - VRF v2.5 integration
-- `OmniDragonVRFConsumerV2_5.sol` - Cross-chain VRF consumer
-- `OmniDragonPriceOracle.sol` - Multi-oracle price aggregation
+#### Tokens
+- `contracts/core/tokens/omniDRAGON.sol` - Main cross-chain token contract
+- `contracts/core/tokens/redDRAGON.sol` - Complementary token
+- `contracts/core/tokens/veDRAGON.sol` - Vote-escrowed governance token
 
-### 🎮 Try It
-Explorer: https://sonicscan.org/address/0x2521f093D012beCDC16336c301A895fbad4DDbC5
+#### Factory & Deployment
+- `contracts/core/factory/OmniDragonDeployer.sol` - Deployer contract for omniDRAGON
+- `contracts/core/factory/CREATE2FactoryWithOwnership.sol` - CREATE2 factory for deterministic deployments
 
-*Swap tokens → Enter lottery → VRF randomness → 69% jackpot prize!* 
+#### Configuration
+- `contracts/core/config/OmniDragonHybridRegistry.sol` - Centralized configuration registry
+
+### Additional Features
+
+#### Oracles
+- Price oracles for ecosystem tokens
+- Chainlink VRF integration
+
+#### Governance
+- Governance contracts for decentralized decision making
+
+#### Lottery & Promotions
+- Lottery system contracts
+- Promotional campaign contracts
+
+#### Helpers & Libraries
+- LayerZero options helper
+- Security utilities
+- Math libraries
+
+## Architecture
+
+The omniDRAGON ecosystem uses a hybrid registry pattern with CREATE2 deterministic deployments:
+
+1. **CREATE2 Deployments**: All contracts use CREATE2 for deterministic addresses across chains
+2. **Hybrid Registry**: Centralized configuration through the OmniDragonHybridRegistry
+3. **LayerZero v2**: Cross-chain functionality via LayerZero OFT standard
+
+## Supported Chains
+
+- Sonic (EID 30332)
+- Arbitrum (EID 30110)
+- Avalanche (EID 30106)
+
+## Key Features
+
+- **Cross-Chain Transfers**: Seamless token transfers across supported chains
+- **Deterministic Addresses**: Same contract addresses on all chains via CREATE2
+- **Centralized Configuration**: Unified configuration management through registry
+- **Security**: Built with OpenZeppelin standards and proper access controls
+- **Governance**: On-chain governance with veDRAGON token
+
+## Development
+
+This is a contracts-only repository. For full deployment scripts and configuration, see the main development repository.
+
+## Security
+
+All contracts have been designed with security best practices:
+- OpenZeppelin standards compliance
+- Proper access controls
+- Reentrancy protection
+- Comprehensive event logging
+
+## License
+
+[Add your license information here] 

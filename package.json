@@ -1,1 +1,37 @@
- 
+{
+  "name": "omnidragon-contracts",
+  "version": "1.0.0",
+  "description": "Smart contracts for the omniDRAGON cross-chain token ecosystem using LayerZero v2 OFT",
+  "main": "index.js",
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "coverage": "hardhat coverage",
+    "lint": "solhint 'contracts/**/*.sol'",
+    "lint:fix": "solhint 'contracts/**/*.sol' --fix"
+  },
+  "keywords": [
+    "solidity",
+    "smart-contracts",
+    "layerzero",
+    "oft",
+    "cross-chain",
+    "defi",
+    "create2"
+  ],
+  "author": "omniDRAGON Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^4.0.0",
+    "@openzeppelin/contracts": "^5.0.0",
+    "@layerzerolabs/lz-evm-oapp-v2": "^2.0.0",
+    "@layerzerolabs/lz-evm-protocol-v2": "^2.0.0",
+    "hardhat": "^2.19.0",
+    "solhint": "^4.1.0"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.0.0",
+    "@layerzerolabs/lz-evm-oapp-v2": "^2.0.0",
+    "@layerzerolabs/lz-evm-protocol-v2": "^2.0.0"
+  }
+} 
