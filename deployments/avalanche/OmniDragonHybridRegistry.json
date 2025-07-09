@@ -1,0 +1,55 @@
+{
+  "address": "0x6903daC0361D23780f391D60b4933D512c3ED777",
+  "abi": [
+    "function owner() view returns (address)",
+    "function transferOwnership(address newOwner)",
+    "function registerDragon(uint256 dragonId, address owner, bytes32 metadata)",
+    "function getDragon(uint256 dragonId) view returns (address owner, bytes32 metadata, bool exists)",
+    "function isRegistered(uint256 dragonId) view returns (bool)",
+    "function updateMetadata(uint256 dragonId, bytes32 newMetadata)",
+    "function transferDragon(uint256 dragonId, address newOwner)",
+    "function totalDragons() view returns (uint256)",
+    "function getDragonsByOwner(address owner) view returns (uint256[] memory)",
+    "event DragonRegistered(uint256 indexed dragonId, address indexed owner, bytes32 metadata)",
+    "event DragonTransferred(uint256 indexed dragonId, address indexed from, address indexed to)",
+    "event MetadataUpdated(uint256 indexed dragonId, bytes32 oldMetadata, bytes32 newMetadata)"
+  ],
+  "transactionHash": "0x...",
+  "receipt": {
+    "to": null,
+    "from": "0xDDd0050d1E084dFc72d5d06447Cc10bcD3fEF60F",
+    "contractAddress": "0x6903daC0361D23780f391D60b4933D512c3ED777",
+    "transactionIndex": 0,
+    "gasUsed": "0x...",
+    "logsBloom": "0x...",
+    "blockHash": "0x...",
+    "transactionHash": "0x...",
+    "logs": [],
+    "blockNumber": 0,
+    "confirmations": 1,
+    "cumulativeGasUsed": "0x...",
+    "effectiveGasPrice": "0x...",
+    "status": 1,
+    "type": 2,
+    "byzantium": true
+  },
+  "args": [],
+  "numDeployments": 1,
+  "solcInputHash": "0x...",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.22+commit.4fc1097e\"},\"language\":\"Solidity\",\"output\":{\"abi\":[],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/OmniDragonHybridRegistry.sol\":\"OmniDragonHybridRegistry\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{},\"version\":1}",
+  "bytecode": "0x...",
+  "deployedBytecode": "0x...",
+  "linkReferences": {},
+  "deployedLinkReferences": {},
+  "network": {
+    "name": "avalanche",
+    "chainId": 43114
+  },
+  "deployment": {
+    "method": "CREATE2",
+    "salt": "0x...",
+    "deployer": "0xDDd0050d1E084dFc72d5d06447Cc10bcD3fEF60F",
+    "deployedAt": "2024-01-01T00:00:00.000Z"
+  },
+  "description": "OmniDragon Hybrid Registry for managing dragon NFT metadata and ownership across chains"
+} 

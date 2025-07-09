@@ -1,14 +1,12 @@
 require('dotenv').config();
 
 import { HardhatUserConfig } from 'hardhat/config';
+import { EndpointId } from '@layerzerolabs/lz-definitions';
 import '@nomiclabs/hardhat-ethers';
+import '@layerzerolabs/toolbox-hardhat';
 import '@nomicfoundation/hardhat-verify';
 import '@typechain/hardhat';
 import 'hardhat-deploy';
-import './tasks/deploy-hybrid-registry';
-import './tasks/deploy-sonic-consistent-registry';
-import './tasks/deploy-omnidragon-vanity';
-import './tasks/verify-create2-omnidragon';
 
 const accounts = process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [];
 
@@ -44,20 +42,23 @@ const config: HardhatUserConfig = {
       chainId: 31337,
     },
     sonic: {
-      url: process.env.SONIC_RPC_URL || 'https://rpc.sonic.tech',
+      url: process.env.SONIC_RPC_URL || 'https://rpc.soniclabs.org',
       accounts,
       chainId: 146,
       gasPrice: 100000000000, // 100 gwei (increased for Sonic)
+      eid: 30332 as EndpointId
     },
     arbitrum: {
       url: process.env.ARBITRUM_RPC_URL || 'https://arb1.arbitrum.io/rpc',
       accounts,
       chainId: 42161,
+      eid: 30110
     },
     avalanche: {
       url: process.env.AVALANCHE_RPC_URL || 'https://api.avax.network/ext/bc/C/rpc',
       accounts,
       chainId: 43114,
+      eid: 30106
     },
   },
   paths: {

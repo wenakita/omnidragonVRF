@@ -1,0 +1,109 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2024-01-01T00:00:00.000Z",
+  "deployer": "0xDDd0050d1E084dFc72d5d06447Cc10bcD3fEF60F",
+  "networks": {
+    "sonic": {
+      "name": "Sonic",
+      "chainId": 146,
+      "rpc": "https://rpc.soniclabs.com/",
+      "explorer": "https://explorer.soniclabs.com/",
+      "layerZero": {
+        "endpointId": 30332,
+        "endpoint": "0x1a44076050125825900e736c501f859c50fE728c"
+      },
+      "contracts": {
+        "omniDRAGON": {
+          "address": "0x6903daC0361D23780f391D60b4933D512c3ED777",
+          "type": "OFT",
+          "description": "OmniDragon token with LayerZero OFT functionality"
+        },
+        "OmniDragonHybridRegistry": {
+          "address": "0x6903daC0361D23780f391D60b4933D512c3ED777",
+          "type": "Registry",
+          "description": "Dragon NFT metadata and ownership registry"
+        }
+      }
+    },
+    "arbitrum": {
+      "name": "Arbitrum One",
+      "chainId": 42161,
+      "rpc": "https://arb1.arbitrum.io/rpc",
+      "explorer": "https://arbiscan.io/",
+      "layerZero": {
+        "endpointId": 30110,
+        "endpoint": "0x1a44076050125825900e736c501f859c50fE728c"
+      },
+      "contracts": {
+        "omniDRAGON": {
+          "address": "0x6903daC0361D23780f391D60b4933D512c3ED777",
+          "type": "OFT",
+          "description": "OmniDragon token with LayerZero OFT functionality"
+        },
+        "OmniDragonHybridRegistry": {
+          "address": "0x6903daC0361D23780f391D60b4933D512c3ED777",
+          "type": "Registry",
+          "description": "Dragon NFT metadata and ownership registry"
+        }
+      }
+    },
+    "avalanche": {
+      "name": "Avalanche C-Chain",
+      "chainId": 43114,
+      "rpc": "https://api.avax.network/ext/bc/C/rpc",
+      "explorer": "https://snowtrace.io/",
+      "layerZero": {
+        "endpointId": 30106,
+        "endpoint": "0x1a44076050125825900e736c501f859c50fE728c"
+      },
+      "contracts": {
+        "omniDRAGON": {
+          "address": "0x6903daC0361D23780f391D60b4933D512c3ED777",
+          "type": "OFT",
+          "description": "OmniDragon token with LayerZero OFT functionality"
+        },
+        "OmniDragonHybridRegistry": {
+          "address": "0x6903daC0361D23780f391D60b4933D512c3ED777",
+          "type": "Registry",
+          "description": "Dragon NFT metadata and ownership registry"
+        }
+      }
+    }
+  },
+  "crossChainConnections": {
+    "layerZero": {
+      "version": "v2",
+      "peers": {
+        "sonic": {
+          "arbitrum": "0x0000000000000000000000006903dac0361d23780f391d60b4933d512c3ed777",
+          "avalanche": "0x0000000000000000000000006903dac0361d23780f391d60b4933d512c3ed777"
+        },
+        "arbitrum": {
+          "sonic": "0x0000000000000000000000006903dac0361d23780f391d60b4933d512c3ed777",
+          "avalanche": "0x0000000000000000000000006903dac0361d23780f391d60b4933d512c3ed777"
+        },
+        "avalanche": {
+          "sonic": "0x0000000000000000000000006903dac0361d23780f391d60b4933d512c3ed777",
+          "arbitrum": "0x0000000000000000000000006903dac0361d23780f391d60b4933d512c3ed777"
+        }
+      }
+    }
+  },
+  "vanityAddresses": {
+    "method": "CREATE2",
+    "salt": "0x...",
+    "description": "All contracts deployed using CREATE2 for deterministic vanity addresses",
+    "contracts": [
+      {
+        "name": "omniDRAGON",
+        "address": "0x6903daC0361D23780f391D60b4933D512c3ED777",
+        "networks": ["sonic", "arbitrum", "avalanche"]
+      },
+      {
+        "name": "OmniDragonHybridRegistry",
+        "address": "0x6903daC0361D23780f391D60b4933D512c3ED777",
+        "networks": ["sonic", "arbitrum", "avalanche"]
+      }
+    ]
+  }
+} 

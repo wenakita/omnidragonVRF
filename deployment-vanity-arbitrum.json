@@ -1,0 +1,18 @@
+{
+  "network": "arbitrum",
+  "chainId": 42161,
+  "deployer": "0xDDd0050d1E084dFc72d5d06447Cc10bcD3fEF60F",
+  "factory": {
+    "address": "0xAA28020DDA6b954D16208eccF873D79AC6533833",
+    "isShared": true
+  },
+  "registry": {
+    "address": "0x69Ea57E45Cb9C66E54964EcC18220A9754E4D777",
+    "transactionHash": "0xdac1c40433512863705e327de8d0df52dfad1a522e886147cab9ed98779638d8",
+    "salt": "0x250b357eb62412fa5125f518e650891263cda7e235bcc83a5b04614b9d885233",
+    "owner": "0xDDd0050d1E084dFc72d5d06447Cc10bcD3fEF60F",
+    "gasUsed": "3499494",
+    "bytecodeHash": "0x6a1be3cea34e6d6f33cf6aa49a8c8323e8725832eaacb4d4d05d5cd45336252e"
+  },
+  "timestamp": "2025-07-08T11:21:13.302Z"
+}

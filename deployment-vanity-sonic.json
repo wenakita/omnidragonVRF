@@ -1,0 +1,18 @@
+{
+  "network": "sonic",
+  "chainId": 146,
+  "deployer": "0xDDd0050d1E084dFc72d5d06447Cc10bcD3fEF60F",
+  "factory": {
+    "address": "0xAA28020DDA6b954D16208eccF873D79AC6533833",
+    "isShared": true
+  },
+  "registry": {
+    "address": "0x69Ea57E45Cb9C66E54964EcC18220A9754E4D777",
+    "transactionHash": "0xe2412d49ec406415cb97a33e121bf816bfddc44b0dad6cf28ece5dae545d2abe",
+    "salt": "0x250b357eb62412fa5125f518e650891263cda7e235bcc83a5b04614b9d885233",
+    "owner": "0xDDd0050d1E084dFc72d5d06447Cc10bcD3fEF60F",
+    "gasUsed": "2861672",
+    "bytecodeHash": "0x6a1be3cea34e6d6f33cf6aa49a8c8323e8725832eaacb4d4d05d5cd45336252e"
+  },
+  "timestamp": "2025-07-08T11:20:57.929Z"
+}

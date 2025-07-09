@@ -300,10 +300,7 @@ contract omniDRAGON is OFT, ReentrancyGuard, IomniDRAGON, IERC165 {
         }
         
         _transfer(from, to, amount);
-        
-        // OPTIMIZATION: Removed expensive LP creation check from every transfer
-        // LP creation is now triggered only in fee collection functions
-        
+
         return true;
     }
 
@@ -336,8 +333,6 @@ contract omniDRAGON is OFT, ReentrancyGuard, IomniDRAGON, IERC165 {
             }
         }
     }
-
-    // OPTIMIZATION: Removed unused _fallbackTokenDistribution function (dead code)
     
     /**
      * @dev OPTIMIZATION: Unified lottery trigger function for better gas efficiency
@@ -364,7 +359,6 @@ contract omniDRAGON is OFT, ReentrancyGuard, IomniDRAGON, IERC165 {
     }
 
     // ========== ADMIN FUNCTIONS ==========
-
     /**
      * @dev AUDIT FIX: Atomic configuration with proper error handling
      * @notice Sets core contract addresses with state consistency protection
@@ -462,8 +456,6 @@ contract omniDRAGON is OFT, ReentrancyGuard, IomniDRAGON, IERC165 {
         
         emit FeesUpdated(isBuy, _jackpot, _veDRAGON, _burn, total);
     }
-
-
 
     /**
      * @dev AUDIT FIX: Renamed from distributeFees to better reflect functionality
