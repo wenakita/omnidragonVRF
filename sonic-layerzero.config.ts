@@ -1,20 +1,22 @@
-import { CustomEndpointId } from './custom-eids'
+// Working LayerZero configuration with Sonic EID 30332 support
+// This bypasses the official EndpointId validation
 
-// LayerZero configuration using custom EID registry
+const SONIC_EID = 30332
+
 const arbitrumContract = {
-    eid: CustomEndpointId.ARBITRUM_V2_MAINNET,
+    eid: 30110, // EndpointId.ARBITRUM_V2_MAINNET
     contractName: 'omniDRAGON',
     address: '0x6986f9531cd91735025d6bEAAe30Bc9F012ad777',
 }
 
 const avalancheContract = {
-    eid: CustomEndpointId.AVALANCHE_V2_MAINNET,
+    eid: 30106, // EndpointId.AVALANCHE_V2_MAINNET
     contractName: 'omniDRAGON',
     address: '0x6986f9531cd91735025d6bEAAe30Bc9F012ad777',
 }
 
 const sonicContract = {
-    eid: CustomEndpointId.SONIC_V2_MAINNET,
+    eid: SONIC_EID,
     contractName: 'omniDRAGON',
     address: '0x6986f9531cd91735025d6bEAAe30Bc9F012ad777',
 }
@@ -57,4 +59,4 @@ export default {
             to: sonicContract,
         },
     ],
-}
+} 

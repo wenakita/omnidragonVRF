@@ -1,7 +1,7 @@
 import 'dotenv/config'
 import 'hardhat-deploy'
+import '@nomiclabs/hardhat-ethers'
 import '@layerzerolabs/toolbox-hardhat'
-import '@nomicfoundation/hardhat-toolbox'
 import '@nomicfoundation/hardhat-verify'
 import { HardhatUserConfig } from 'hardhat/types'
 import { EndpointId } from '@layerzerolabs/lz-definitions'
@@ -11,13 +11,35 @@ const accounts = PRIVATE_KEY ? [PRIVATE_KEY] : []
 
 const config: HardhatUserConfig = {
     solidity: {
-        version: '0.8.20',
-        settings: {
-            optimizer: {
-                enabled: true,
-                runs: 200,
+        compilers: [
+            {
+                version: '0.8.20',
+                settings: {
+                    optimizer: {
+                        enabled: true,
+                        runs: 200,
+                    },
+                },
             },
-        },
+            {
+                version: '0.8.22',
+                settings: {
+                    optimizer: {
+                        enabled: true,
+                        runs: 200,
+                    },
+                },
+            },
+            {
+                version: '0.8.28',
+                settings: {
+                    optimizer: {
+                        enabled: true,
+                        runs: 200,
+                    },
+                },
+            },
+        ],
     },
     networks: {
         arbitrum: {
@@ -32,6 +54,12 @@ const config: HardhatUserConfig = {
             accounts,
             chainId: 43114,
         },
+        sonic: {
+            eid: 30332 as any, // Custom Sonic EID
+            url: process.env.SONIC_RPC_URL || 'https://rpc.soniclabs.com',
+            accounts,
+            chainId: 146,
+        },
         hardhat: {
             allowUnlimitedContractSize: true,
         },
@@ -45,7 +73,18 @@ const config: HardhatUserConfig = {
         apiKey: {
             avalanche: process.env.SNOWTRACE_API_KEY || '',
             arbitrumOne: process.env.ARBISCAN_API_KEY || '',
+            sonic: process.env.SONICSCAN_API_KEY || '',
         },
+        customChains: [
+            {
+                network: 'sonic',
+                chainId: 146,
+                urls: {
+                    apiURL: 'https://api.sonicscan.org/api',
+                    browserURL: 'https://sonicscan.org',
+                },
+            },
+        ],
     },
 }
 
