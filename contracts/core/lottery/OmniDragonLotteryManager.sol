@@ -13,9 +13,8 @@ error TransferFailed();
 // AUDIT FIX: Removed unused veDRAGONMath import
 import { IChainlinkVRFIntegratorV2_5 } from "../../interfaces/external/chainlink/IChainlinkVRFIntegratorV2_5.sol";
 import { IOmniDragonVRFConsumerV2_5 } from "../../interfaces/external/chainlink/IOmniDragonVRFConsumerV2_5.sol";
-// Removed IDrandRandomnessProvider - using only Chainlink VRF
-import { MessagingReceipt } from "../../../lib/devtools/packages/oapp-evm/contracts/oapp/OAppSender.sol";
-import { MessagingFee } from "../../../lib/devtools/packages/oapp-evm/contracts/oapp/OApp.sol";
+import { MessagingReceipt } from "@layerzerolabs/lz-evm-oapp-v2/contracts/oapp/OAppSender.sol";
+import { MessagingFee } from "@layerzerolabs/lz-evm-oapp-v2/contracts/oapp/OApp.sol";
 import { IDragonJackpotDistributor } from "../../interfaces/lottery/IDragonJackpotDistributor.sol";
 import { IOmniDragonPriceOracle } from "../../interfaces/oracles/IOmniDragonPriceOracle.sol";
 

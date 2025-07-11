@@ -12,13 +12,13 @@ pragma solidity ^0.8.22;
  */
 
 import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
-import { OApp, MessagingFee, Origin } from "../../../../lib/devtools/packages/oapp-evm/contracts/oapp/OApp.sol";
-import { MessagingReceipt } from "../../../../lib/devtools/packages/oapp-evm/contracts/oapp/OAppSender.sol";
-import { OAppOptionsType3 } from "../../../../lib/devtools/packages/oapp-evm/contracts/oapp/libs/OAppOptionsType3.sol";
-import { OptionsBuilder } from "../../../../lib/devtools/packages/oapp-evm/contracts/oapp/libs/OptionsBuilder.sol";
+import { OApp, MessagingFee, Origin } from "@layerzerolabs/lz-evm-oapp-v2/contracts/oapp/OApp.sol";
+import { MessagingReceipt } from "@layerzerolabs/lz-evm-oapp-v2/contracts/oapp/OAppSender.sol";
+import { OAppOptionsType3 } from "@layerzerolabs/lz-evm-oapp-v2/contracts/oapp/libs/OAppOptionsType3.sol";
+import { OptionsBuilder } from "@layerzerolabs/lz-evm-oapp-v2/contracts/oapp/libs/OptionsBuilder.sol";
 import { IChainlinkVRFIntegratorV2_5 } from "../../../interfaces/external/chainlink/IChainlinkVRFIntegratorV2_5.sol";
 import { IRandomWordsCallbackV2_5 } from "../../../interfaces/external/chainlink/IRandomWordsCallbackV2_5.sol";
-import { SetConfigParam } from "../../../../lib/layerzero-v2/packages/layerzero-v2/evm/protocol/contracts/interfaces/IMessageLibManager.sol";
+// Removed import for SetConfigParam as the source file is not found
 
 /**
  * @title ChainlinkVRFIntegratorV2_5
