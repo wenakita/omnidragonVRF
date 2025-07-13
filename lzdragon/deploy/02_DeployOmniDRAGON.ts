@@ -26,9 +26,9 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
         return
     }
 
-    // Deploy omniDRAGON via CREATE2
-    // Using deterministic 32-byte salt for consistent cross-chain addresses
-    const salt = "0x0000000000000000000000000000000000000000000000000000000000000002"
+    // Deploy omniDRAGON via CREATE2  
+    // Using vanity salt to get address 0x6999c894f6ee7b59b0271245f27b6c371d08d777
+    const salt = "0xc8b1f05c97528df008ca7c3e31bfd9361acbe547ca976bfc28a8d7e473920152"
     
     // Get the contract factory
     const DragonFactory = await ethers.getContractFactory("omniDRAGON")
@@ -36,7 +36,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     // IMPORTANT: Using deployer as owner to receive tokens
     const constructorArgs = ethers.utils.defaultAbiCoder.encode(
         ["string", "string", "address", "address", "address"],
-        ["omniDRAGON", "DRAGON", registry.address, registry.address, deployer] // name, symbol, delegate, registry, owner
+        ["Dragon", "DRAGON", registry.address, registry.address, deployer] // name, symbol, delegate, registry, owner
     )
     const deploymentBytecode = bytecode + constructorArgs.slice(2)
     

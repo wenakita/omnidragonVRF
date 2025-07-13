@@ -23,8 +23,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     }
 
     // Deploy OmniDragonHybridRegistry via CREATE2
-    // Using deterministic 32-byte salt for consistent cross-chain addresses
-    const salt = "0x0000000000000000000000000000000000000000000000000000000000000001"
+    // Using vanity salt to get address 0x69092c4af14b13ae15e1bf822bc38b072ee1d777
+    const salt = "0x8b1e85e5301fe0d9fe499daa95956af04e5d37eeee55aa914f2a514ef517239c"
     
     // Get the contract factory
     const RegistryFactory = await ethers.getContractFactory("OmniDragonHybridRegistry")
