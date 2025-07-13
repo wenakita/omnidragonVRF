@@ -15,9 +15,7 @@ import { IOmniDragonLotteryManager } from "../../interfaces/lottery/IOmniDragonL
 import { IOmniDragonHybridRegistry } from "../../interfaces/config/IOmniDragonHybridRegistry.sol";
 
 // DEX interfaces
-/**
- * @dev Generic interface for wrapped native tokens (WETH, WAVAX, WS, WFTM, etc.)
- */
+/// @dev Wrapped native token interface
 interface IWrappedNative is IERC20 {
     function deposit() external payable;
     function withdraw(uint256) external;
@@ -44,57 +42,28 @@ error ContractPaused();
 error InvalidFeeConfiguration();
 error InsufficientBalance();
 error UnauthorizedCaller(); 
-error ConfigurationSyncFailed(); 
+error ConfigurationSyncFailed();
+error FeeMRegistrationFailed();
+error ApproveFailed();
+error ApproveResetFailed();
 
-/**
- * @title omniDRAGON
- * @author akita
- * @dev Cross-chain DRAGON token with LayerZero V2 integration and immediate fee distribution
- * @notice Community-driven cross-chain token for the Omnichain ecosystem
- * 
- * FEATURES:
- *  Cross-chain transfers via LayerZero V2 & Registry-based hybrid architecture
- *  Verifiable Randomness Function (VRF) via Chainlink VRF V2.5 (Arbitrum) via LayerZero
- *  Community lottery on purchases & Immediate fee distribution system
- *  Deflationary burn mechanics & Fair launch with transparent fees
- * 
- * TOKENOMICS & FEE DISTRIBUTION:
- *  Buy Fees (Wrapped Native/Native → DRAGON): 10% total
- *    ├── 6.9% → JackpotVault (immediate distribution)
- *    ├── 2.41% → veDRAGONRevenueDistributor (immediate distribution)
- *    └── 0.69% → Contract (operational funds for buyback and burn)
- *  
- *  Sell Fees (DRAGON → Wrapped Native): 10% total
- *    ├── 6.9% → JackpotVault (immediate distribution)
- *    ├── 2.41% → veDRAGONRevenueDistributor (immediate distribution)
- *    └── 0.69% → Dead Address (immediate burn)
- * 
- *  Transfer: 0% fee
- *  Supply: 6.942M fixed (minted only on Sonic chain)
- *  Distribution: Sonic mints → LayerZero bridges to other chains
- *  
- * OPERATIONAL FUNDS USAGE:
- *  - Accumulated 0.69% from buy transactions (Wrapped Native/Native)
- *  - Used for periodic buyback of DRAGON tokens from market
- *  - Buyback tokens can be burned to reduce circulating supply
- *  - Provides additional deflationary pressure beyond direct sell burns
- *  - Controlled by owner via executeBuybackAndBurn() functions
- * 
- * CROSS-CHAIN NATIVE TOKEN SUPPORT:
- *  - Sonic: S (Native) → WS (Wrapped Sonic)
- *  - Arbitrum: ETH (Native) → WETH (Wrapped Ether)
- *  - Avalanche: AVAX (Native) → WAVAX (Wrapped AVAX)
- *  - Fantom: FTM (Native) → WFTM (Wrapped FTM)
- *  - Polygon: MATIC (Native) → WMATIC (Wrapped MATIC)
- *  - BSC: BNB (Native) → WBNB (Wrapped BNB)
- *  - Ethereum: ETH (Native) → WETH (Wrapped Ether)
- * 
- * CHAINS: Sonic (146) - ORIGIN CHAIN | Arbitrum (42161) | Avalanche (43114) | Extensible via registry
- * DEX COMPATIBILITY: Uses Uniswap V2 compatible routers on all chains
- *
- * https://x.com/sonicreddragon
- * https://t.me/sonicreddragon
- */
+// Event Categories for gas optimization
+enum EventCategory {
+    BUY_JACKPOT,
+    BUY_REVENUE,
+    BUY_OPERATIONAL,
+    SELL_JACKPOT,
+    SELL_REVENUE,
+    SELL_BURN,
+    NATIVE_LOTTERY,
+    BUYBACK_BURN,
+    WRAP_FAILED_REFUNDED,
+    WRAP_FAILED_KEPT,
+    NATIVE_NO_WRAPPER,
+    RECOVERED_BY_OWNER
+} 
+
+/// @title omniDRAGON - Cross-chain token with LayerZero V2 and immediate fee distribution
 contract omniDRAGON is OFT, ReentrancyGuard, IERC165 {
     using SafeERC20 for IERC20;
 
@@ -199,20 +168,13 @@ contract omniDRAGON is OFT, ReentrancyGuard, IERC165 {
     event ContractPausedEvent(bool paused);
     event LotteryManagerUpdated(address indexed oldManager, address indexed newManager);
     event RegistryChainConfigUpdated(uint16 chainId, address wrappedNative, string symbol);
-    event ImmediateDistributionExecuted(address indexed recipient, uint256 amount, string distributionType);
-    event OperationalFundsUsed(uint256 amount, string purpose);
-    event TokensBurned(uint256 amount, string burnType);
-    event NativeReceived(address indexed sender, uint256 amount, string reason);
-    event FeeDistributed(address indexed recipient, uint256 amount, string distributionType);
+    event ImmediateDistributionExecuted(address indexed recipient, uint256 amount, EventCategory distributionType);
+    event OperationalFundsUsed(uint256 amount, EventCategory purpose);
+    event TokensBurned(uint256 amount, EventCategory burnType);
+    event NativeReceived(address indexed sender, uint256 amount, EventCategory reason);
+    event FeeDistributed(address indexed recipient, uint256 amount, EventCategory distributionType);
 
-    /**
-     * @dev Constructor for omniDRAGON
-     * @param _name Token name
-     * @param _symbol Token symbol
-     * @param _delegate Delegate address (should be hybrid registry)
-     * @param _registry Registry address
-     * @param _owner Owner address
-     */
+    /// @dev Constructor
     constructor(
         string memory _name,
         string memory _symbol,
@@ -265,7 +227,7 @@ contract omniDRAGON is OFT, ReentrancyGuard, IERC165 {
             
             // Register with FeeM on Sonic chain
             (bool _success,) = SONIC_FEEM_CONTRACT.call(abi.encodeWithSignature("selfRegister(uint256)", FEEM_REGISTRATION_ID));
-            require(_success, "FeeM registration failed");
+            if (!_success) revert FeeMRegistrationFailed();
         }
     }
 
@@ -285,9 +247,7 @@ contract omniDRAGON is OFT, ReentrancyGuard, IERC165 {
         return _transferWithFees(from, to, amount);
     }
 
-    /**
-     * @dev Internal transfer function with fee logic
-     */
+    /// @dev Internal transfer with fee logic
     function _transferWithFees(address from, address to, uint256 amount) internal returns (bool) {
         if (from == address(0) || to == address(0)) revert ZeroAddress();
         
@@ -309,9 +269,7 @@ contract omniDRAGON is OFT, ReentrancyGuard, IERC165 {
             return true;
         }
 
-    /**
-     * @dev Process buy transaction with immediate fee distribution
-     */
+    /// @dev Process buy transaction
     function _processBuy(address from, address to, uint256 amount) internal returns (bool) {
         if (controlFlags.feesEnabled && !isExcludedFromFees[to]) {
             uint256 feeAmount = (amount * buyFees.total) / BASIS_POINTS;
@@ -330,9 +288,7 @@ contract omniDRAGON is OFT, ReentrancyGuard, IERC165 {
         return true;
     }
     
-    /**
-     * @dev Process sell transaction with immediate fee distribution and burn
-     */
+    /// @dev Process sell transaction
     function _processSell(address from, address to, uint256 amount) internal returns (bool) {
         if (controlFlags.feesEnabled && !isExcludedFromFees[from]) {
             uint256 feeAmount = (amount * sellFees.total) / BASIS_POINTS;
@@ -347,11 +303,7 @@ contract omniDRAGON is OFT, ReentrancyGuard, IERC165 {
         return true;
     }
     
-    /**
-     * @dev Distribute buy fees immediately from collected DRAGON tokens
-     * @param seller The address from which fees are collected (typically the DEX pair)
-     * @param feeAmount The total amount of DRAGON tokens to distribute as fees
-     */
+    /// @dev Distribute buy fees
     function _distributeBuyFees(address seller, uint256 feeAmount) internal {
         if (feeAmount == 0) return;
         
@@ -361,25 +313,21 @@ contract omniDRAGON is OFT, ReentrancyGuard, IERC165 {
         
         if (jackpotAmount > 0 && jackpotVault != address(0)) {
             _transfer(seller, jackpotVault, jackpotAmount);
-            emit ImmediateDistributionExecuted(jackpotVault, jackpotAmount, "buy_jackpot");
+            emit ImmediateDistributionExecuted(jackpotVault, jackpotAmount, EventCategory.BUY_JACKPOT);
         }
         
         if (revenueAmount > 0 && revenueDistributor != address(0)) {
             _transfer(seller, revenueDistributor, revenueAmount);
-            emit ImmediateDistributionExecuted(revenueDistributor, revenueAmount, "buy_revenue");
+            emit ImmediateDistributionExecuted(revenueDistributor, revenueAmount, EventCategory.BUY_REVENUE);
         }
         
         if (operationalAmount > 0) {
             _transfer(seller, address(this), operationalAmount);
-            emit ImmediateDistributionExecuted(address(this), operationalAmount, "buy_operational");
+            emit ImmediateDistributionExecuted(address(this), operationalAmount, EventCategory.BUY_OPERATIONAL);
         }
     }
     
-    /**
-     * @dev Distribute sell fees immediately from collected DRAGON tokens
-     * @param seller The address from which fees are collected (the seller)
-     * @param feeAmount The total amount of DRAGON tokens to distribute as fees
-     */
+    /// @dev Distribute sell fees
     function _distributeSellFees(address seller, uint256 feeAmount) internal {
         if (feeAmount == 0) return;
         
@@ -389,29 +337,23 @@ contract omniDRAGON is OFT, ReentrancyGuard, IERC165 {
         
         if (jackpotAmount > 0 && jackpotVault != address(0)) {
             _transfer(seller, jackpotVault, jackpotAmount);
-            emit ImmediateDistributionExecuted(jackpotVault, jackpotAmount, "sell_jackpot");
+            emit ImmediateDistributionExecuted(jackpotVault, jackpotAmount, EventCategory.SELL_JACKPOT);
         }
         
         if (revenueAmount > 0 && revenueDistributor != address(0)) {
             _transfer(seller, revenueDistributor, revenueAmount);
-            emit ImmediateDistributionExecuted(revenueDistributor, revenueAmount, "sell_revenue");
+            emit ImmediateDistributionExecuted(revenueDistributor, revenueAmount, EventCategory.SELL_REVENUE);
         }
         
         if (burnAmount > 0) {
             _transfer(seller, DEAD_ADDRESS, burnAmount);
-            emit TokensBurned(burnAmount, "sell_burn");
+            emit TokensBurned(burnAmount, EventCategory.SELL_BURN);
         }
         
         _triggerLottery(seller, feeAmount);
     }
-    
-    /**
-     * @dev DUPLICATE REMOVED: Lottery trigger function consolidated below
-     */
-    
-    /**
-     * @dev Get LayerZero endpoint from registry
-     */
+
+    /// @dev Get LayerZero endpoint
     function _getLayerZeroEndpoint(address _registry) internal view returns (address) {
         if (_registry == address(0)) return address(0);
         
@@ -474,7 +416,7 @@ contract omniDRAGON is OFT, ReentrancyGuard, IERC165 {
         (bool success,) = lotteryManager.call{value: amount}("");
         if (!success) revert TransferFailed();
         
-        emit FeeDistributed(lotteryManager, amount, "native_lottery_distribution");
+        emit FeeDistributed(lotteryManager, amount, EventCategory.NATIVE_LOTTERY);
     }
 
     function setLotteryManager(address _lotteryManager) external onlyOwner {
@@ -549,7 +491,7 @@ contract omniDRAGON is OFT, ReentrancyGuard, IERC165 {
         uint256 swapAmount = maxWrappedNativeAmount > wrappedBalance ? wrappedBalance : maxWrappedNativeAmount;
         
         // Handle approve return value
-        require(wrappedNative.approve(router, swapAmount), "Approve failed");
+        if (!wrappedNative.approve(router, swapAmount)) revert ApproveFailed();
         
         address[] memory path = new address[](2);
         path[0] = address(wrappedNative);
@@ -572,11 +514,11 @@ contract omniDRAGON is OFT, ReentrancyGuard, IERC165 {
             }
             
             emit BuybackAndBurn(tokensBought, swapAmount, block.timestamp);
-            emit OperationalFundsUsed(swapAmount, "buyback_and_burn");
-            emit TokensBurned(tokensBought, "buyback_burn");
+            emit OperationalFundsUsed(swapAmount, EventCategory.BUYBACK_BURN);
+            emit TokensBurned(tokensBought, EventCategory.BUYBACK_BURN);
         } catch {
             // Handle approve return value in catch block
-            require(wrappedNative.approve(router, 0), "Reset approve failed");
+            if (!wrappedNative.approve(router, 0)) revert ApproveResetFailed();
             revert TransferFailed();
         }
     }
@@ -681,20 +623,19 @@ contract omniDRAGON is OFT, ReentrancyGuard, IERC165 {
         if (msg.value > 0) {
             if (address(wrappedNative) != address(0)) {
                 try wrappedNative.deposit{value: msg.value}() {
-                    emit NativeReceived(msg.sender, msg.value, 
-                        string(abi.encodePacked(wrappedNativeSymbol, "_wrapped")));
+                    emit NativeReceived(msg.sender, msg.value, EventCategory.NATIVE_NO_WRAPPER);
                 } catch {
                     // If wrapping fails, refund to sender to prevent lockup
                     (bool refundSuccess,) = msg.sender.call{value: msg.value}("");
                     if (refundSuccess) {
-                        emit NativeReceived(msg.sender, msg.value, "wrap_failed_refunded");
+                        emit NativeReceived(msg.sender, msg.value, EventCategory.WRAP_FAILED_REFUNDED);
                     } else {
                         // If refund fails, keep in contract and emit event for manual recovery
-                        emit NativeReceived(msg.sender, msg.value, "wrap_failed_kept_for_recovery");
+                        emit NativeReceived(msg.sender, msg.value, EventCategory.WRAP_FAILED_KEPT);
                     }
                 }
             } else {
-                emit NativeReceived(msg.sender, msg.value, "native_no_wrapper");
+                emit NativeReceived(msg.sender, msg.value, EventCategory.NATIVE_NO_WRAPPER);
             }
         }
     }
@@ -712,7 +653,7 @@ contract omniDRAGON is OFT, ReentrancyGuard, IERC165 {
         (bool success,) = owner().call{value: amount}("");
         if (!success) revert TransferFailed();
         
-        emit NativeReceived(owner(), amount, "recovered_by_owner");
+        emit NativeReceived(owner(), amount, EventCategory.RECOVERED_BY_OWNER);
     }
     
     /**
