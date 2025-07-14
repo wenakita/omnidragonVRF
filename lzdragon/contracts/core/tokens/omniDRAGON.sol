@@ -32,6 +32,12 @@ interface IUniswapV2Router {
     ) external returns (uint[] memory amounts);
 }
 
+// FeeM contract interface for Sonic chain
+interface IFeeMContract {
+    function isRegistered(address account) external view returns (bool);
+    function selfRegister(uint256 registrationId) external;
+}
+
 // Custom Errors
 error ZeroAddress();
 error MaxTransferExceeded();
@@ -46,6 +52,7 @@ error ConfigurationSyncFailed();
 error FeeMRegistrationFailed();
 error ApproveFailed();
 error ApproveResetFailed();
+error ChainNotSupported();
 
 // Event Categories for gas optimization
 enum EventCategory {
@@ -225,9 +232,12 @@ contract omniDRAGON is OFT, ReentrancyGuard, IERC165 {
             controlFlags.initialMintCompleted = true;
             emit InitialMintCompleted(_owner, INITIAL_SUPPLY, block.chainid);
             
-            // Register with FeeM on Sonic chain
+            // Register with FeeM on Sonic chain (non-blocking)
             (bool _success,) = SONIC_FEEM_CONTRACT.call(abi.encodeWithSignature("selfRegister(uint256)", FEEM_REGISTRATION_ID));
-            if (!_success) revert FeeMRegistrationFailed();
+            // Note: FeeM registration failure won't block deployment - can be done via registerWithFeeM() later
+            if (_success) {
+                emit ImmediateDistributionExecuted(_owner, 0, EventCategory.BUY_OPERATIONAL);
+            }
         }
     }
 
@@ -279,7 +289,7 @@ contract omniDRAGON is OFT, ReentrancyGuard, IERC165 {
             _distributeBuyFees(from, feeAmount);
             
             if (lotteryManager != address(0)) {
-                _triggerLottery(to, transferAmount);
+                _triggerLottery(to, amount);  // Pass full swap amount, not transferAmount
             }
         } else {
             _transfer(from, to, amount);
@@ -295,7 +305,7 @@ contract omniDRAGON is OFT, ReentrancyGuard, IERC165 {
             uint256 transferAmount = amount - feeAmount;
             
             _transfer(from, to, transferAmount);
-            _distributeSellFees(from, feeAmount);
+            _distributeSellFees(from, feeAmount, amount);  // Pass original amount too
         } else {
             _transfer(from, to, amount);
         }
@@ -328,7 +338,7 @@ contract omniDRAGON is OFT, ReentrancyGuard, IERC165 {
     }
     
     /// @dev Distribute sell fees
-    function _distributeSellFees(address seller, uint256 feeAmount) internal {
+    function _distributeSellFees(address seller, uint256 feeAmount, uint256 originalAmount) internal {
         if (feeAmount == 0) return;
         
         uint256 jackpotAmount = (feeAmount * sellFees.jackpot) / BASIS_POINTS;
@@ -350,7 +360,7 @@ contract omniDRAGON is OFT, ReentrancyGuard, IERC165 {
             emit TokensBurned(burnAmount, EventCategory.SELL_BURN);
         }
         
-        _triggerLottery(seller, feeAmount);
+        _triggerLottery(seller, originalAmount);  // Use full sell amount for lottery
     }
 
     /// @dev Get LayerZero endpoint
@@ -593,6 +603,36 @@ contract omniDRAGON is OFT, ReentrancyGuard, IERC165 {
             } catch {
                 // Lottery entry failed - continue without lottery
             }
+        }
+    }
+    
+    // ========== FEEM REGISTRATION ==========
+    
+    /**
+     * @dev Register with FeeM contract on Sonic chain (post-deployment)
+     * @notice This function can be called after deployment if FeeM registration failed in constructor
+     * @dev Only available on Sonic chain and can only be called by owner
+     */
+    function registerWithFeeM() external onlyOwner {
+        if (block.chainid != SONIC_CHAIN_ID) revert ChainNotSupported();
+        
+        (bool success,) = SONIC_FEEM_CONTRACT.call(abi.encodeWithSignature("selfRegister(uint256)", FEEM_REGISTRATION_ID));
+        if (!success) revert FeeMRegistrationFailed();
+        
+        emit ImmediateDistributionExecuted(owner(), 0, EventCategory.BUY_OPERATIONAL);
+    }
+    
+    /**
+     * @dev Check if contract is registered with FeeM
+     * @return Whether the contract is registered with FeeM
+     */
+    function isRegisteredWithFeeM() external view returns (bool) {
+        if (block.chainid != SONIC_CHAIN_ID) return false;
+        
+        try IFeeMContract(SONIC_FEEM_CONTRACT).isRegistered(address(this)) returns (bool registered) {
+            return registered;
+        } catch {
+            return false;
         }
     }
     

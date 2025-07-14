@@ -1,0 +1,61 @@
+{
+  "timestamp": "2025-07-12T08:17:39.318Z",
+  "tokenAddress": "0x6999c894f6ee7b59b0271245f27b6c371d08d777",
+  "registryAddress": "0x69637BfD5D2b851D870d9E0E38B5b73FaF950777",
+  "results": [
+    {
+      "chain": "Sonic",
+      "chainId": 146,
+      "success": true,
+      "contractExists": true,
+      "verified": false,
+      "tokenDetails": {
+        "name": "Dragon",
+        "symbol": "DRAGON",
+        "decimals": "18",
+        "totalSupply": "6941900000000000000000000",
+        "totalSupplyFormatted": "6941900.0",
+        "owner": "0xDDd0050d1E084dFc72d5d06447Cc10bcD3fEF60F",
+        "registryBalance": "0",
+        "registryBalanceFormatted": "0.0"
+      },
+      "error": null
+    },
+    {
+      "chain": "Arbitrum",
+      "chainId": 42161,
+      "success": true,
+      "contractExists": true,
+      "verified": false,
+      "tokenDetails": {
+        "name": "Dragon",
+        "symbol": "DRAGON",
+        "decimals": "18",
+        "totalSupply": "100000000000000000000",
+        "totalSupplyFormatted": "100.0",
+        "owner": "0xDDd0050d1E084dFc72d5d06447Cc10bcD3fEF60F",
+        "registryBalance": "0",
+        "registryBalanceFormatted": "0.0"
+      },
+      "error": null
+    },
+    {
+      "chain": "Avalanche",
+      "chainId": 43114,
+      "success": true,
+      "contractExists": true,
+      "verified": false,
+      "tokenDetails": {
+        "name": "Dragon",
+        "symbol": "DRAGON",
+        "decimals": "18",
+        "totalSupply": "0",
+        "totalSupplyFormatted": "0.0",
+        "owner": "0xDDd0050d1E084dFc72d5d06447Cc10bcD3fEF60F",
+        "registryBalance": "0",
+        "registryBalanceFormatted": "0.0"
+      },
+      "error": null
+    }
+  ]
+}

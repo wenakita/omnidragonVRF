@@ -1,0 +1,23 @@
+{
+  "network": "registry-only",
+  "timestamp": "2025-07-11T18:55:09.020613661+00:00",
+  "factory": "0xaa28020dda6b954d16208eccf873d79ac6533833",
+  "registry": {
+    "address": "0x69092c4af14b13ae15e1bf822bc38b072ee1d777",
+    "salt": "0x8b1e85e5301fe0d9fe499daa95956af04e5d37eeee55aa914f2a514ef517239c",
+    "attempts": 24403749,
+    "time_seconds": 1.506242168,
+    "contract_name": "OmniDragonHybridRegistry",
+    "bytecode_hash": "0x48be50edf860a051d9ebfb6b24debfb68012a8243d1d21d8b04ec630622c8337",
+    "factory_address": "0xaa28020dda6b954d16208eccf873d79ac6533833"
+  },
+  "omnidragon": {
+    "address": "0x69beb4ba214f6b82453f651b77ce773dbe6bd777",
+    "salt": "0xb54465de221f3af328d353d20163f28aacaafa3ae1bf741b3cec9128ea4ca78c",
+    "attempts": 10781334,
+    "time_seconds": 0.670779814,
+    "contract_name": "omniDRAGON",
+    "bytecode_hash": "0x48be50edf860a051d9ebfb6b24debfb68012a8243d1d21d8b04ec630622c8337",
+    "factory_address": "0xaa28020dda6b954d16208eccf873d79ac6533833"
+  }
+}

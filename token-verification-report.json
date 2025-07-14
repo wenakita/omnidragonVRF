@@ -1,0 +1,49 @@
+{
+  "timestamp": "2025-07-12T08:11:07.429Z",
+  "tokenAddress": "0x6999c894f6ee7b59b0271245f27b6c371d08d777",
+  "registryAddress": "0x69637BfD5D2b851D870d9E0E38B5b73FaF950777",
+  "results": [
+    {
+      "success": true,
+      "chainId": 146,
+      "name": "Sonic",
+      "contractDetails": {
+        "name": "N/A",
+        "symbol": "N/A",
+        "decimals": "N/A",
+        "totalSupply": "0",
+        "owner": "N/A",
+        "deployerBalance": "0"
+      },
+      "explorerUrl": "https://sonicscan.org/token/0x6999c894f6ee7b59b0271245f27b6c371d08d777"
+    },
+    {
+      "success": true,
+      "chainId": 42161,
+      "name": "Arbitrum",
+      "contractDetails": {
+        "name": "Dragon",
+        "symbol": "DRAGON",
+        "decimals": "18",
+        "totalSupply": "100000000000000000000",
+        "owner": "0xDDd0050d1E084dFc72d5d06447Cc10bcD3fEF60F",
+        "deployerBalance": "0"
+      },
+      "explorerUrl": "https://arbiscan.io/token/0x6999c894f6ee7b59b0271245f27b6c371d08d777"
+    },
+    {
+      "success": true,
+      "chainId": 43114,
+      "name": "Avalanche",
+      "contractDetails": {
+        "name": "Dragon",
+        "symbol": "DRAGON",
+        "decimals": "18",
+        "totalSupply": "0",
+        "owner": "0xDDd0050d1E084dFc72d5d06447Cc10bcD3fEF60F",
+        "deployerBalance": "0"
+      },
+      "explorerUrl": "https://snowscan.xyz/token/0x6999c894f6ee7b59b0271245f27b6c371d08d777"
+    }
+  ]
+}

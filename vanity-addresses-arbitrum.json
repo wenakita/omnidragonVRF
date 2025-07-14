@@ -1,0 +1,23 @@
+{
+  "network": "arbitrum",
+  "timestamp": "2025-07-11T16:49:19.898946160+00:00",
+  "factory": "0xaa28020dda6b954d16208eccf873d79ac6533833",
+  "registry": {
+    "address": "0x694e56d0a1fff86f3562f0ef4ced1d8c73c6d777",
+    "salt": "0x1aa5b42b77560a7f75ace7fd94efec1090056e4533572def81a3d7bbc106fb3e",
+    "attempts": 281995,
+    "time_seconds": 0.01563825,
+    "contract_name": "OmniDragonHybridRegistry",
+    "bytecode_hash": "0x8092e24419e3525bd7668a4334ef5c5f9e3b131032c3f000d8c014ffd2268455",
+    "factory_address": "0xaa28020dda6b954d16208eccf873d79ac6533833"
+  },
+  "omnidragon": {
+    "address": "0x697d0ff684dc7fc7f878f442ba44109ad1b7d777",
+    "salt": "0x17b037a50381cbc4cfe1168767cbe594bbd64b83efc0f006b76425c45e517351",
+    "attempts": 18107153,
+    "time_seconds": 1.104109446,
+    "contract_name": "omniDRAGON",
+    "bytecode_hash": "0x2e1b89973bddcfda5a4c8eef1334f16cf00be57c976ba3f316cdd0e363697adc",
+    "factory_address": "0xaa28020dda6b954d16208eccf873d79ac6533833"
+  }
+}

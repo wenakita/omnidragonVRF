@@ -23,16 +23,16 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     }
 
     // Deploy OmniDragonHybridRegistry via CREATE2
-    // Using vanity salt to get address 0x69092c4af14b13ae15e1bf822bc38b072ee1d777
-    const salt = "0x8b1e85e5301fe0d9fe499daa95956af04e5d37eeee55aa914f2a514ef517239c"
+    // Using vanity salt to get address 0x69b029b7ef2468c2b546556022be2dd66cd20777
+    const salt = "0x98f23b350844835bd924bf63a1fa9768049d00680dd110f5fd72b0979f708e4f"
     
     // Get the contract factory
     const RegistryFactory = await ethers.getContractFactory("OmniDragonHybridRegistry")
     const bytecode = RegistryFactory.bytecode
-    // IMPORTANT: Using factory address as constructor argument to match vanity address calculation
+    // Constructor arguments for registry deployment
     const constructorArgs = ethers.utils.defaultAbiCoder.encode(
         ["address"],
-        [CREATE2_FACTORY_ADDRESS]
+        [deployer]
     )
     const deploymentBytecode = bytecode + constructorArgs.slice(2)
     
@@ -108,6 +108,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
             chainId,
             config.name,
             config.wrappedNative,
+            "", // wrappedNativeSymbol (auto-determined by contract)
             ethers.constants.AddressZero, // lotteryManager (will be set later)
             ethers.constants.AddressZero, // randomnessProvider
             ethers.constants.AddressZero, // priceOracle

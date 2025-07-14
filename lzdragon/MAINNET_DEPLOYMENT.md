@@ -171,11 +171,11 @@ updateWrappedNative(wrappedNativeAddress, "SYMBOL")
 ## 📊 Expected Contract Addresses (CREATE2)
 
 Vanity addresses consistent across all chains using CREATE2:
-- **Registry**: `0x69092c4af14b13ae15e1bf822bc38b072ee1d777` 🎯
-- **omniDRAGON**: `0x6999c894f6ee7b59b0271245f27b6c371d08d777` 🎯
+- **Registry**: `0x69b029b7ef2468c2b546556022be2dd66cd20777` 🎯
+- **omniDRAGON**: `0x69c1395b68bdc5201d8fde9ce1aea67c72310777` 🎯
 - **Factory**: `0xAA28020DDA6b954D16208eccF873D79AC6533833`
 
-*Note: All addresses start with 0x69 and end with d777 for easy recognition!*
+*Note: All addresses start with 0x69 and end with 0777 for easy recognition! Generated for current contract bytecode.*
 
 ## 🎯 Success Criteria
 

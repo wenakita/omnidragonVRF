@@ -1,0 +1,11 @@
+{
+  "contract_name": "OmniDragonHybridRegistry",
+  "factory": "0xAA28020DDA6b954D16208eccF873D79AC6533833",
+  "bytecode_hash": "0x9e71277bf2b87ae8f49919a866102264c3236438df2b7519e8b2603bf27bddf9",
+  "pattern": "69...0777",
+  "salt": "0xef7d2841ce56558b684453bcd36a601d63c4dd84906347d728d25b04f63dae67",
+  "address": "0x69c82bc11076c9ccb667ef966185fe596e960777",
+  "attempts": 8782996,
+  "duration_seconds": 0.62038526,
+  "timestamp": "2025-07-13T04:16:28.467443632+00:00"
+}

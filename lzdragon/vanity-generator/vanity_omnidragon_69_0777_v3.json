@@ -1,0 +1,11 @@
+{
+  "contract_name": "omniDRAGON",
+  "factory": "0xAA28020DDA6b954D16208eccF873D79AC6533833",
+  "bytecode_hash": "0xc8718310c80ec1cc36e4f85e1fe96994baf24c5f54df5d7f6d839ca996bdd685",
+  "pattern": "69...0777",
+  "salt": "0xb43984bbf9fb60cacc9497f0d9029e8fef712ef6074955ec72647c326525d38d",
+  "address": "0x69c1395b68bdc5201d8fde9ce1aea67c72310777",
+  "attempts": 5193970,
+  "duration_seconds": 0.4619872,
+  "timestamp": "2025-07-13T05:16:13.370022657+00:00"
+}

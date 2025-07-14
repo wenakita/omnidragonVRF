@@ -26,14 +26,14 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
         return
     }
 
-    // Deploy omniDRAGON via CREATE2  
-    // Using vanity salt to get address 0x6999c894f6ee7b59b0271245f27b6c371d08d777
-    const salt = "0xc8b1f05c97528df008ca7c3e31bfd9361acbe547ca976bfc28a8d7e473920152"
+    // Deploy omniDRAGON via CREATE2
+    // Using vanity salt to get address 0x690E5d16e171E3545895F3E064c25a8858A30777
+    const salt = "0x9f010b008dece704b9b0846eb4b3cc0e28fdaebe4cceb74a0ac1744147605743"
     
     // Get the contract factory
     const DragonFactory = await ethers.getContractFactory("omniDRAGON")
     const bytecode = DragonFactory.bytecode
-    // IMPORTANT: Using deployer as owner to receive tokens
+    // Constructor arguments for omniDRAGON deployment
     const constructorArgs = ethers.utils.defaultAbiCoder.encode(
         ["string", "string", "address", "address", "address"],
         ["Dragon", "DRAGON", registry.address, registry.address, deployer] // name, symbol, delegate, registry, owner
@@ -56,8 +56,18 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     if (codeAtAddress !== '0x') {
         console.log(`omniDRAGON already deployed at ${computedAddress}`)
     } else {
-        // Deploy via factory
-        const tx = await factoryContract.deploy(deploymentBytecode, salt, "omniDRAGON")
+        // Deploy via factory with explicit gas parameters
+        const gasPrice = await ethers.provider.getGasPrice()
+        const gasLimit = 5000000 // 5M gas limit
+        
+        console.log(`Using gas price: ${ethers.utils.formatUnits(gasPrice, 'gwei')} gwei`)
+        console.log(`Using gas limit: ${gasLimit.toLocaleString()}`)
+        
+        const tx = await factoryContract.deploy(deploymentBytecode, salt, "omniDRAGON", {
+            gasLimit: gasLimit,
+            maxFeePerGas: ethers.utils.parseUnits('200', 'gwei'), // 200 gwei
+            maxPriorityFeePerGas: ethers.utils.parseUnits('100', 'gwei'), // 100 gwei
+        })
         await tx.wait()
         console.log(`omniDRAGON deployment tx: ${tx.hash}`)
     }
@@ -89,7 +99,12 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
             currentConfig.priceOracle,        // Keep existing price oracle
             currentConfig.vrfConsumer,        // Keep existing VRF consumer
             computedAddress,                  // Update dragon token address
-            currentConfig.jackpotVault       // Keep existing jackpot vault
+            currentConfig.jackpotVault,       // Keep existing jackpot vault
+            {
+                gasLimit: 500000, // 500k gas limit for registry update
+                maxFeePerGas: ethers.utils.parseUnits('200', 'gwei'),
+                maxPriorityFeePerGas: ethers.utils.parseUnits('100', 'gwei'),
+            }
         )
     } else {
         console.log(`Chain ${chainId} not registered in registry, skipping update...`)

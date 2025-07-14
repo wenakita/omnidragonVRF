@@ -1,0 +1,9 @@
+{
+  "address": "0x69403746cc8611da542e70a7dd59e98206430777",
+  "factoryAddress": "0xAA28020DDA6b954D16208eccF873D79AC6533833",
+  "initCodeHash": "0x1617a8b0f0925388b9015aacdb085351d04c35e415bd001c6a26f4874ba3023e",
+  "prefix": "0x69",
+  "salt": "0xbbefd55fbfb07ffbbdebc901c64286d9309d53a97295dde317f67021c70e18e1",
+  "searchDuration": 24.039835307,
+  "suffix": "0777"
+}

@@ -144,11 +144,7 @@ contract OmniDragonLotteryManager is Ownable, ReentrancyGuard {
     
     // Access control
     mapping(address => bool) public authorizedSwapContracts;
-    
-    // Unclaimed prizes (DoS protection)
-    mapping(address => uint256) public unclaimedPrizes;
-    uint256 public totalUnclaimedPrizes;
-    
+
     // Lottery state
     mapping(uint256 => PendingLotteryEntry) public pendingEntries;
     mapping(address => UserStats) public userStats;
@@ -495,24 +491,15 @@ contract OmniDragonLotteryManager is Ownable, ReentrancyGuard {
         
         // If local VRF failed, try cross-chain VRF
         if (requestId == 0 && address(vrfIntegrator) != address(0)) {
-            // AUDIT FIX: Get dynamic VRF fee instead of hardcoded value
-            uint256 vrfFee;
-            try vrfIntegrator.quote(30110, "") returns (MessagingFee memory fee) {
-                vrfFee = fee.nativeFee;
+            // Request cross-chain VRF without payment (VRF fees should be handled separately)
+            try vrfIntegrator.requestRandomWordsSimple(30110) returns (
+                MessagingReceipt memory /* receipt */,
+                uint64 sequence
+            ) {
+                requestId = uint256(sequence);
+                source = RandomnessSource.CROSS_CHAIN_VRF;
             } catch {
-                vrfFee = 0.1 ether; // Fallback fee if estimation fails
-            }
-            
-            if (address(this).balance >= vrfFee) {
-                try vrfIntegrator.requestRandomWordsSimple{value: vrfFee}(30110) returns (
-                    MessagingReceipt memory /* receipt */,
-                    uint64 sequence
-                ) {
-                    requestId = uint256(sequence);
-                    source = RandomnessSource.CROSS_CHAIN_VRF;
-                } catch {
-                    // Cross-chain VRF also failed
-                }
+                // Cross-chain VRF also failed
             }
         }
         
@@ -644,7 +631,7 @@ contract OmniDragonLotteryManager is Ownable, ReentrancyGuard {
      * @dev Distribute instant lottery reward to winner
      * @param winner The winner address
      * @param reward The reward amount
-     * @dev IMPROVED: More robust immediate distribution with simplified fallback
+     * @dev Pure coordinator - delegates all fund handling to other contracts
      */
     function _distributeInstantLotteryReward(address winner, uint256 reward) internal {
         if (address(jackpotDistributor) == address(0) || reward == 0) {
@@ -654,6 +641,7 @@ contract OmniDragonLotteryManager is Ownable, ReentrancyGuard {
         // PRIMARY: Try jackpot distributor (should work 99%+ of the time)
         try jackpotDistributor.distributeJackpot(winner, reward) {
             // ✅ Reward distributed successfully - most common path
+            emit InstantLotteryProcessed(winner, 0, true, reward);
             return;
         } catch Error(string memory /* reason */) {
             // Log specific error for debugging
@@ -663,20 +651,21 @@ contract OmniDragonLotteryManager is Ownable, ReentrancyGuard {
             emit PrizeTransferFailed(winner, reward);
         }
         
-        // FALLBACK: Try direct ETH transfer if distributor fails
-        if (address(this).balance >= reward) {
-            // SECURITY FIX: Use call instead of transfer for native tokens
-            (bool success, ) = payable(winner).call{value: reward}("");
-            if (!success) revert TransferFailed();
-            // ✅ Direct transfer succeeded
-            emit InstantLotteryProcessed(winner, 0, true, reward);
-            return;
+        // FALLBACK: Try jackpot vault if distributor fails
+        if (address(jackpotVault) != address(0)) {
+            try jackpotVault.payJackpot(winner, reward) {
+                // ✅ Jackpot vault succeeded
+                emit InstantLotteryProcessed(winner, 0, true, reward);
+                return;
+            } catch {
+                // Vault also failed
+                emit PrizeTransferFailed(winner, reward);
+            }
         }
         
-        // LAST RESORT: Add to unclaimed prizes (rare case)
-        unclaimedPrizes[winner] += reward;
-        totalUnclaimedPrizes += reward;
-        emit PrizeClaimable(winner, reward);
+        // If all payout methods fail, emit event for manual intervention
+        // No funds are held by this contract
+        emit PrizeTransferFailed(winner, reward);
     }
 
     /**
@@ -853,39 +842,33 @@ contract OmniDragonLotteryManager is Ownable, ReentrancyGuard {
     // NOTE: These functions handle rare cases where immediate distribution fails
     // 99%+ of prizes are distributed immediately without needing these functions
     
+    // ============ DEPRECATED PRIZE CLAIM FUNCTIONS ============
+    // These functions are kept for interface compatibility but are no longer used
+    // All prizes are distributed immediately through jackpot distributor/vault
+    
     /**
-     * @notice Check unclaimed prize amount for an address
-     * @param user Address to check
-     * @return amount Unclaimed prize amount
+     * @notice DEPRECATED - Returns 0 as lottery manager no longer holds funds
+     * @param user Address to check (unused)
+     * @return amount Always returns 0
      */
-    function getUnclaimedPrizes(address user) external view returns (uint256 amount) {
-        return unclaimedPrizes[user];
+    function getUnclaimedPrizes(address user) external pure returns (uint256 amount) {
+        return 0;
     }
     
     /**
-     * @notice Claim unclaimed lottery prizes (RARE - only used if immediate distribution fails)
-     * @dev Pull payment mechanism for edge cases where distributor fails
+     * @notice DEPRECATED - No-op as lottery manager no longer holds funds
+     * @dev Reverts to indicate this function is no longer used
      */
-    function claimPrize() external nonReentrant {
-        uint256 amount = unclaimedPrizes[msg.sender];
-        require(amount > 0, "No unclaimed prizes");
-        
-        unclaimedPrizes[msg.sender] = 0;
-        totalUnclaimedPrizes -= amount;
-        
-        // SECURITY FIX: Use call instead of transfer for native tokens
-        (bool success, ) = payable(msg.sender).call{value: amount}("");
-        if (!success) revert TransferFailed();
-        
-        emit PrizeClaimed(msg.sender, amount);
+    function claimPrize() external pure {
+        revert("Function deprecated - lottery manager does not hold funds");
     }
     
     /**
-     * @notice Get total unclaimed prizes across all users
-     * @return total Total unclaimed prize amount
+     * @notice DEPRECATED - Returns 0 as lottery manager no longer holds funds
+     * @return total Always returns 0
      */
-    function getTotalUnclaimedPrizes() external view returns (uint256 total) {
-        return totalUnclaimedPrizes;
+    function getTotalUnclaimedPrizes() external pure returns (uint256 total) {
+        return 0;
     }
 
     // ============ PRICING FUNCTIONS ============
@@ -971,16 +954,7 @@ contract OmniDragonLotteryManager is Ownable, ReentrancyGuard {
 
     // ============ EMERGENCY FUNCTIONS ============
     
-    function emergencyWithdrawETH() external onlyOwner {
-        // SECURITY FIX: Use call instead of transfer for native tokens
-        (bool success, ) = payable(owner()).call{value: address(this).balance}("");
-        if (!success) revert TransferFailed();
-    }
-
-    function emergencyWithdrawETH(uint256 amount) external onlyOwner {
-        require(amount <= address(this).balance, "Insufficient balance");
-        // SECURITY FIX: Use call instead of transfer for native tokens
-        (bool success, ) = payable(owner()).call{value: amount}("");
-        if (!success) revert TransferFailed();
-    }
+    // REMOVED: Emergency ETH withdrawal functions
+    // Lottery manager should not hold or handle any funds
+    // All fund handling is delegated to jackpot vault and distributor
 }  

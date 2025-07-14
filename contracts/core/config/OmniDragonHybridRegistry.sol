@@ -6,7 +6,7 @@ import '../../interfaces/config/IOmniDragonHybridRegistry.sol';
 
 /**
  * @title OmniDragonHybridRegistry
- * @dev Lightweight registry for hybrid pattern omniDRAGON deployment
+ * @dev Registry for hybrid pattern omniDRAGON deployment
  * 
  * Provides:
  * - Deterministic address calculation via CREATE2
@@ -16,7 +16,7 @@ import '../../interfaces/config/IOmniDragonHybridRegistry.sol';
  */
 contract OmniDragonHybridRegistry is IOmniDragonHybridRegistry, Ownable {
     // Basic chain configuration storage
-    mapping(uint16 => ChainConfig) private chainConfigs;
+    mapping(uint16 => IOmniDragonHybridRegistry.ChainConfig) private chainConfigs;
     uint16[] private supportedChains;
     uint16 private currentChainId;
     
@@ -79,7 +79,7 @@ contract OmniDragonHybridRegistry is IOmniDragonHybridRegistry, Ownable {
         if (chainConfigs[_chainId].chainId == _chainId) revert ChainAlreadyRegistered(_chainId);
         if (_wrappedNativeToken == address(0)) revert ZeroAddress();
         
-        chainConfigs[_chainId] = ChainConfig({
+        chainConfigs[_chainId] = IOmniDragonHybridRegistry.ChainConfig({
             chainId: _chainId,
             chainName: _chainName,
             wrappedNativeToken: _wrappedNativeToken,
@@ -140,7 +140,7 @@ contract OmniDragonHybridRegistry is IOmniDragonHybridRegistry, Ownable {
     /**
      * @notice Get chain configuration
      */
-    function getChainConfig(uint16 _chainId) external view override returns (ChainConfig memory) {
+    function getChainConfig(uint16 _chainId) external view override returns (IOmniDragonHybridRegistry.ChainConfig memory) {
         return chainConfigs[_chainId];
     }
     

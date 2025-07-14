@@ -63,9 +63,9 @@ library LayerZeroOptionsHelper {
     /**
      * @dev Checks if options are Legacy Type 1 format
      * @param options The options to check
-     * @return isLegacyType1 True if options are Legacy Type 1 format
+     * @return True if options are Legacy Type 1 format
      */
-    function isLegacyType1(bytes memory options) internal pure returns (bool isLegacyType1) {
+    function isLegacyType1(bytes memory options) internal pure returns (bool) {
         if (options.length != 34) return false;
         
         uint16 optionType;

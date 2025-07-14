@@ -1,0 +1,17 @@
+{
+  "network": "sonic",
+  "timestamp": "2025-07-11T18:55:13.161Z",
+  "factory": "0xAA28020DDA6b954D16208eccF873D79AC6533833",
+  "registry": {
+    "address": "0x69092c4af14b13ae15e1bf822bc38b072ee1d777",
+    "salt": "0x8b1e85e5301fe0d9fe499daa95956af04e5d37eeee55aa914f2a514ef517239c",
+    "bytecodeHash": "0x48be50edf860a051d9ebfb6b24debfb68012a8243d1d21d8b04ec630622c8337",
+    "contract_name": "OmniDragonHybridRegistry"
+  },
+  "omnidragon": {
+    "address": "0x6999c894f6ee7b59b0271245f27b6c371d08d777",
+    "salt": "0xc8b1f05c97528df008ca7c3e31bfd9361acbe547ca976bfc28a8d7e473920152",
+    "bytecodeHash": "0xdc957ba2588b63a1d5ba5ba210c35fe0bb17eb7fa10559c60b1fe16d94a037b9",
+    "contract_name": "omniDRAGON"
+  }
+}

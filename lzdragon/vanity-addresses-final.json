@@ -1,0 +1,17 @@
+{
+  "network": "multi-chain",
+  "timestamp": "2025-07-13T13:00:00.000000000+00:00",
+  "factory": "0xAA28020DDA6b954D16208eccF873D79AC6533833",
+  "registry": {
+    "address": "0x69b029b7ef2468c2b546556022be2dd66cd20777",
+    "salt": "0x98f23b350844835bd924bf63a1fa9768049d00680dd110f5fd72b0979f708e4f",
+    "bytecodeHash": "0xeab74db63fef5936d78d0bdacd0f2b4176081ad8233b6d79887f87c3260e9cf5",
+    "contract_name": "OmniDragonHybridRegistry"
+  },
+  "omnidragon": {
+    "address": "0x690E5d16e171E3545895F3E064c25a8858A30777",
+    "salt": "0x9f010b008dece704b9b0846eb4b3cc0e28fdaebe4cceb74a0ac1744147605743",
+    "bytecodeHash": "0xc8718310c80ec1cc36e4f85e1fe96994baf24c5f54df5d7f6d839ca996bdd685",
+    "contract_name": "omniDRAGON"
+  }
+}
